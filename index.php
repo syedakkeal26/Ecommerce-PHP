@@ -59,43 +59,43 @@
                           </a>
                         </li>
                         <?php
-                          if(isset($_SESSION['user'])){
-                            $image = (!empty($user['photo'])) ? 'images/'.$user['photo'] : 'images/profile.jpg';
-                            echo '
-                              <li class="dropdown user user-menu">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                  <img src="'.$image.'" class="user-image" alt="User Image">
-                                  <span class="hidden-xs">'.$user['firstname'].' '.$user['lastname'].'</span>
-                                </a>
-                                <ul class="dropdown-menu">
-                                  <!-- User image -->
-                                  <li class="user-header">
-                                    <img src="'.$image.'" class="img-circle" alt="User Image">
+                        //   if(isset($_SESSION['user'])){
+                        //     $image = (!empty($user['photo'])) ? 'images/'.$user['photo'] : 'images/profile.jpg';
+                        //     echo '
+                        //       <li class="dropdown user user-menu">
+                        //         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        //           <img src="'.$image.'" class="user-image" alt="User Image">
+                        //           <span class="hidden-xs">'.$user['firstname'].' '.$user['lastname'].'</span>
+                        //         </a>
+                        //         <ul class="dropdown-menu">
+                        //           <!-- User image -->
+                        //           <li class="user-header">
+                        //             <img src="'.$image.'" class="img-circle" alt="User Image">
 
-                                    <p>
-                                      '.$user['firstname'].' '.$user['lastname'].'
-                                      <small>Member since '.date('M. Y', strtotime($user['created_on'])).'</small>
-                                    </p>
-                                  </li>
-                                  <li class="user-footer">
-                                    <div class="pull-left">
-                                      <a href="profile.php" class="btn btn-default btn-flat">Profile</a>
-                                    </div>
-                                    <div class="pull-right">
-                                      <a href="logout.php" class="btn btn-default btn-flat">Sign out</a>
-                                    </div>
-                                  </li>
-                                </ul>
-                              </li>
-                            ';
-                          }
-                          else{
-                            echo '
-                            <li class="nav-item">
-                              <li><a class="nav-link" href="login.php">LOGIN</a></li>
-                              <li><a class="nav-link" href="register.php">SIGNUP</a><li>
-                           </li>';
-                          }
+                        //             <p>
+                        //               '.$user['firstname'].' '.$user['lastname'].'
+                        //               <small>Member since '.date('M. Y', strtotime($user['created_on'])).'</small>
+                        //             </p>
+                        //           </li>
+                        //           <li class="user-footer">
+                        //             <div class="pull-left">
+                        //               <a href="profile.php" class="btn btn-default btn-flat">Profile</a>
+                        //             </div>
+                        //             <div class="pull-right">
+                        //               <a href="logout.php" class="btn btn-default btn-flat">Sign out</a>
+                        //             </div>
+                        //           </li>
+                        //         </ul>
+                        //       </li>
+                        //     ';
+                        //   }
+                        //   else{
+                        //     echo '
+                        //     <li class="nav-item">
+                        //       <li><a class="nav-link" href="login.php">LOGIN</a></li>
+                        //       <li><a class="nav-link" href="register.php">SIGNUP</a><li>
+                        //    </li>';
+                        //   }
                         ?>
                      </ul>
                   </div>

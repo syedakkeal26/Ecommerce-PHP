@@ -1,3 +1,40 @@
+<?php
+session_start();
+include('config.php'); // Include your database connection
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // Authenticate the user (replace with your authentication logic)
+    $query = "SELECT id, email, password FROM users WHERE email = '$email'";
+    $result = $conn->query($query);
+
+    if ($result->num_rows == 1) {
+        $row = $result->fetch_assoc();
+        $storedPassword = $row['password'];
+
+        // Verify the provided password against the stored hashed password
+        if (password_verify($password, $storedPassword)) {
+            // Authentication successful
+            $_SESSION['user_id'] = $row['id'];
+            $_SESSION['user_email'] = $row['email'];
+
+            // Redirect the user to a dashboard or another page
+            header("Location: index.php");
+            exit();
+        } else {
+            // Password doesn't match
+            $error = "Invalid password.";
+        }
+    } else {
+        // User with the provided email doesn't exist
+        $error = "User not found.";
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 
 <html
@@ -62,14 +99,14 @@
               <div class="app-brand justify-content-center" >
                 <h4 class="mb-2">Login</h4>
               </div>
-              <form id="formAuthentication" class="mb-3" action="index.php" method="POST">
+              <form id="formAuthentication" class="mb-3" action="login.php" method="POST">
                 <div class="mb-3">
                   <label for="email" class="form-label">Email</label>
                   <input
                     type="text"
                     class="form-control"
                     id="email"
-                    name="email-username"
+                    name="email"
                     placeholder="Enter your email"
                     autofocus />
                 </div>

@@ -1,42 +1,24 @@
 <?php
+include('config.php');
 
-// include 'db_config.php';
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $mobile = $_POST['mobile'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $cpassword = $_POST['cpassword'];
 
-// if(isset($_POST['submit'])){
+    // Hash the password for security (use a better hashing method in production)
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-//    $name = mysqli_real_escape_string($conn, $_POST['username']);
-//    $email = mysqli_real_escape_string($conn, $_POST['email']);
-//    $mobile = mysqli_real_escape_string($conn, $_POST['mobile']);
+    $sql = "INSERT INTO users (username,mobile,email,password) VALUES ('$username','$mobile','$email','$hashed_password')";
 
-//    // here it password is converted to encrypted form
-//    $password = md5($_POST['password']);
-//    $cpassword = md5($_POST['cpassword']);
-//    $type = $_POST['type'];
-//    // select data from the table
-//    $select = " SELECT * FROM users WHERE email = '$email' and password = '$password' ";
-
-//    $result = mysqli_query($conn, $select);
-
-//    if(mysqli_num_rows($result) > 0){
-//       // if user/admin enter the same details in table it shows
-//       $error[] = 'User already exist!';
-
-//    }else{
-
-//       if($password != $cpassword){
-//          // if passwords are not match
-//          $error[] = 'password not matched!';
-//       }else{
-//          // insert the data to the table
-//          $insert = "INSERT INTO users(username, email, mobile, password, type) VALUES('$name','$email','$mobile','$password','0')";
-//          mysqli_query($conn, $insert);
-//          // if data insert correctly then redirect to login page
-//          header('location:login.php');
-//       }
-//    }
-
-// };
-
+    if ($conn->query($sql) === TRUE) {
+      header("Location: login.php");;
+    } else {
+        echo "Error: " . $conn->error;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html
