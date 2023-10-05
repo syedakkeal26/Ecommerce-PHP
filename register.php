@@ -6,6 +6,8 @@ if(isset($_POST['submit'])){
 
    $name = mysqli_real_escape_string($conn, $_POST['username']);
    $email = mysqli_real_escape_string($conn, $_POST['email']);
+   $mobile = mysqli_real_escape_string($conn, $_POST['mobile']);
+
    // here it password is converted to encrypted form
    $password = md5($_POST['password']);
    $cpassword = md5($_POST['cpassword']);
@@ -26,7 +28,7 @@ if(isset($_POST['submit'])){
          $error[] = 'password not matched!';
       }else{
          // insert the data to the table
-         $insert = "INSERT INTO users(username, email,mobile, password, type) VALUES('$name','$email','$mobile','$password','0')";
+         $insert = "INSERT INTO users(username, email, mobile, password, type) VALUES('$name','$email','$mobile','$password','0')";
          mysqli_query($conn, $insert);
          // if data insert correctly then redirect to login page
          header('location:login.php');
