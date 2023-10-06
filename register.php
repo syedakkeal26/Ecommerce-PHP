@@ -1,25 +1,70 @@
+<!--  -->
+
 <?php
+
 include('config.php');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
-    $mobile = $_POST['mobile'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $cpassword = $_POST['cpassword'];
+if(isset($_POST['submit'])){
 
-    // Hash the password for security (use a better hashing method in production)
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+   $username = mysqli_real_escape_string($conn, $_POST['username']);
+   $email = mysqli_real_escape_string($conn, $_POST['email']);
+   // here it password is converted to encrypted form
+   $password = md5($_POST['password']);
+   $cpassword = md5($_POST['cpassword']);
+   $mobile = $_POST['mobile'];
 
-    $sql = "INSERT INTO users (username,mobile,email,password) VALUES ('$username','$mobile','$email','$hashed_password')";
+  $_SESSION['username'] = $username;
+  $_SESSION['email'] = $email;
+  $_SESSION['mobile'] = $mobile;
 
-    if ($conn->query($sql) === TRUE) {
-      header("Location: login.php");;
-    } else {
-        echo "Error: " . $conn->error;
-    }
-}
+   // select data from the table
+   $select = " SELECT * FROM users WHERE email = '$email' and password = '$password' ";
+
+   $result = mysqli_query($conn, $select);
+
+   $error = array();
+
+    if (empty($username)) {
+    $error[] = "Username is required";
+  }
+
+  if (empty($email)) {
+    $error[] = "Email is required";
+  } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $error[] = "Invalid email format.";
+  }
+
+  if (empty($mobile)) {
+    $error[] = "Mobile number is required";
+  } elseif (!preg_match("/^[0-9]{10}$/", $mobile)) {
+    $error[] = "Invalid mobile number format.";
+  }
+
+  if (empty($password)) {
+    $error[] = "Password is required";
+  }
+
+   if(mysqli_num_rows($result) > 0){
+      // if user/admin enter the same details in table it shows
+      $error[] = 'User already exist!';
+
+   }else{
+
+      if($password != $cpassword){
+         // if passwords are not match
+         $error[] = 'Password not matched!';
+      }else{
+         // insert the data to the table
+         $insert = "INSERT INTO users (username, email, password, mobile) VALUES('$username','$email','$password','$mobile')";
+         mysqli_query($conn, $insert);
+         // if data insert correctly then redirect to login page
+         header('location:login.php');
+      }
+   }
+
+};
 ?>
+
 <!DOCTYPE html>
 <html
   lang="en"
@@ -35,6 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
     <title>Register Page</title>
+
 
     <meta name="description" content="" />
 
@@ -64,8 +110,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <!-- Helpers -->
     <script src="assets/vendor/js/helpers.js"></script>
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="assets/js/config.js"></script>
   </head>
 
@@ -81,30 +125,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               <div class="app-brand justify-content-center" >
                 <h4 class="mb-2">Register</h4>
               </div>
-              <form id="formAuthentication" class="mb-3" action="" method="POST">
+              <form id="formAuthentication" class="mb-3"  method="POST">
+                <div class="text-center">
+                  <?php
+                    if(isset($error)){
+                      foreach($error as $error){
+                        echo '<span style="color:#FF0000;allign:center"class="error-msg">'.$error.'</span>';
+                      };
+                    };
+                  ?>
+                </div>
                 <div class="mb-3">
                   <label for="username" class="form-label">Username</label>
-                  <input type="text" class="form-control" id="username" name="username" required placeholder="Enter your username" autofocus />
+                  <input type="text" class="form-control" id="username" name="username"  placeholder="Enter your username" value="<?php echo (isset($_SESSION['username'])) ? $_SESSION['username'] : '' ?>" autofocus />
                 </div>
                 <div class="mb-3">
                   <label for="email" class="form-label">Email</label>
-                  <input type="text" class="form-control" id="email" name="email" required placeholder="Enter your email" />
+                  <input type="text" class="form-control" id="email" name="email"  placeholder="Enter your email" value="<?php echo (isset($_SESSION['email'])) ? $_SESSION['email'] : '' ?>"
+                  />
                 </div>
                 <div class="mb-3">
                   <label for="mobile" class="form-label">Mobile Number</label>
-                  <input type="number" class="form-control" id="mobile" name="mobile" required placeholder="Enter your mobile number" />
+                  <input type="number" class="form-control" id="mobile" name="mobile"  placeholder="Enter your mobile number" value="<?php echo (isset($_SESSION['mobile'])) ? $_SESSION['mobile'] : '' ?>" />
                 </div>
                 <div class="mb-3 form-password-toggle">
                   <label class="form-label" for="password">Password</label>
                   <div class="input-group input-group-merge">
-                    <input type="password" id="password" class="form-control" name="password" required placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
+                    <input type="password" id="password" class="form-control" name="password"  placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                   </div>
                 </div>
                 <div class="mb-3 form-password-toggle">
                   <label class="form-label" for="password">Confirm Password</label>
                   <div class="input-group input-group-merge">
-                  <input type="password" id="cpassword" class="form-control" name="cpassword" required placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
+                  <input type="password" id="cpassword" class="form-control" name="cpassword"  placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                   </div>
                 </div>
@@ -118,7 +172,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               </p>
             </div>
           </div>
-          <!-- Register Card -->
         </div>
       </div>
     </div>

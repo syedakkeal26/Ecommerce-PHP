@@ -4,32 +4,37 @@ include('config.php'); // Include your database connection
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
-    $password = $_POST['password'];
+    $password = $_POST['password']; // Removed md5 hashing
 
     // Authenticate the user (replace with your authentication logic)
     $query = "SELECT id, email, password FROM users WHERE email = '$email'";
-    $result = $conn->query($query);
+    $result = mysqli_query($conn, $query);
 
-    if ($result->num_rows == 1) {
-        $row = $result->fetch_assoc();
-        $storedPassword = $row['password'];
+    if ($result) { // Check if the query was successful
+        if ($result->num_rows == 1) {
+            $row = $result->fetch_assoc();
+            $storedPassword = $row['password'];
 
-        // Verify the provided password against the stored hashed password
-        if (password_verify($password, $storedPassword)) {
-            // Authentication successful
-            $_SESSION['user_id'] = $row['id'];
-            $_SESSION['user_email'] = $row['email'];
+            // Verify the provided password against the stored hashed password
+            if (password_verify($password, $storedPassword)) {
+                // Authentication successful
+                $_SESSION['user_id'] = $row['id'];
+                $_SESSION['user_email'] = $row['email'];
 
-            // Redirect the user to a dashboard or another page
-            header("Location: index.php");
-            exit();
+                // Redirect the user to a dashboard or another page
+                header("Location: index.php");
+                exit();
+            } else {
+                // Incorrect password
+                $error = "Incorrect password.";
+            }
         } else {
-            // Password doesn't match
-            $error = "Invalid password.";
+            // User with the provided email doesn't exist
+            $error = "User not found.";
         }
     } else {
-        // User with the provided email doesn't exist
-        $error = "User not found.";
+        // Query execution error
+        $error = "Error executing query: " . mysqli_error($conn);
     }
 }
 ?>
@@ -94,39 +99,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <!-- Register -->
           <div class="card">
             <div class="card-body">
-              <!-- Logo -->
-              <!-- /Logo -->
+
               <div class="app-brand justify-content-center" >
                 <h4 class="mb-2">Login</h4>
+              </div>
+              <div class="text-center">
+
+                  <?php
+                    if (isset($_GET['error']))
+                      {
+                        ?> <p class="error"> <?php echo $_GET['error']; ?> </p> <?php
+                         } ?>
               </div>
               <form id="formAuthentication" class="mb-3" action="login.php" method="POST">
                 <div class="mb-3">
                   <label for="email" class="form-label">Email</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    autofocus />
+                  <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" value="<?php echo (isset($_SESSION['email'])) ? $_SESSION['email'] : '' ?>" autofocus />
                 </div>
                 <div class="mb-3 form-password-toggle">
                   <div class="d-flex justify-content-between">
                     <label class="form-label" for="password">Password</label>
-                    <a href="auth-forgot-password-basic.html">
-                      <small>Forgot Password?</small>
-                    </a>
                   </div>
                   <div class="input-group input-group-merge">
-                    <input
-                      type="password"
-                      id="password"
-                      class="form-control"
-                      name="password"
-                      placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                      aria-describedby="password" />
+                    <input type="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                   </div>
+                  <a href="auth-forgot-password-basic.html">
+                    <small>Forgot Password?</small>
+                  </a>
                 </div>
 
                 <div class="mb-3">
