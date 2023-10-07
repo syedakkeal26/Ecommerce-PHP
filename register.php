@@ -34,7 +34,9 @@ if (isset($_POST['submit'])) {
 
     if (empty($password)) {
         $errors['password'] = "Password is required";
-    }
+    } elseif (strlen($password) < 8 || !preg_match("/[!@#\$%^&*()\-_=+{};:,<.>]/", $password)) {
+      $errors['password'] = "Password must be at least 8 characters long and contain at least one special character.";
+  }
 
     if ($password != $cpassword) {
         $errors['cpassword'] = 'Password not matched!';
@@ -86,7 +88,7 @@ if (isset($_POST['submit'])) {
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <!-- <link rel="icon" type="image/x-icon" href="assets/img/favicon/favicon.ico" /> -->
+    
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

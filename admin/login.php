@@ -1,52 +1,64 @@
 <?php
 session_start();
-include('../config.php'); // Include your database connection
+include('../config.php');
+
+$errors = array(
+    'email' => '',
+    'password' => ''
+);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
-    $password = $_POST['password']; // Removed md5 hashing
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $password = $_POST['password'];
+    if (empty($email)) {
+        $errors['email'] = "Email is required.";
+    }
 
-    // Authenticate the user (replace with your authentication logic)
-    $query = "SELECT id, email, password FROM users WHERE email = '$email'";
-    $result = mysqli_query($conn, $query);
+    if (empty($password)) {
+        $errors['password'] = "Password is required.";
+    }
 
-    if ($result) { // Check if the query was successful
-        if ($result->num_rows == 1) {
-            $row = $result->fetch_assoc();
-            $storedPassword = $row['password'];
+    if (empty($errors['email']) && empty($errors['password'])) {
 
-            // Verify the provided password against the stored hashed password
-            if (password_verify($password, $storedPassword)) {
-                // Authentication successful
-                $_SESSION['user_id'] = $row['id'];
-                $_SESSION['type'] = $row['type'];
-              if($_SESSION['type'] == '1'){
-                header("Location: dashboard.php");
-                exit();
-              }
-                // Redirect the user to a dashboard or another page
+        $_SESSION['email'] = $email;
+        
+        
+        $query = "SELECT * FROM users WHERE email = '$email'";
+        $result = mysqli_query($conn, $query);
+        
+
+        if ($result) {
+            if (mysqli_num_rows($result) == 1) {
+                $row = mysqli_fetch_assoc($result);
+                $stored_password = $row['password'];
+
+                // Verify the provided password against the stored hashed password
+                if (password_verify($password, $stored_password)) {
+                  if ($row['type'] == '1') {
+                    $_SESSION['admin'] = $row['id'];
+                    $_SESSION['admin_name'] = $row['username'];
+
+                        header('location: dashboard.php'); 
+                        exit();
+                    } 
+                } else {
+                    $errors['password'] = "Incorrect password.";
+                }
             } else {
-                // Incorrect password
-                $error = "Incorrect password.";
+                $errors['email'] = "User not found.";
             }
-        } else {
-            // User with the provided email doesn't exist
-            $error = "User not found.";
-        }
-    } else {
-        // Query execution error
-        $error = "Error executing query: " . mysqli_error($conn);
+        } 
     }
 }
 ?>
-<!DOCTYPE html>
 
+<!DOCTYPE html>
 <html
   lang="en"
   class="light-style layout-wide customizer-hide"
   dir="ltr"
   data-theme="theme-default"
-  data-../assets-path="../assets/"
+  data-assets-path="assets/"
   data-template="vertical-menu-template-free">
   <head>
     <meta charset="utf-8" />
@@ -59,7 +71,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <!-- <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" /> -->
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -110,12 +121,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     id="email"
                     name="email"
                     placeholder="Enter your email"
+                    value="<?php echo (isset($_SESSION['email'])) ? $_SESSION['email'] : '' ?>"
                     autofocus />
+                    <span style="color: red;"><?php echo $errors['email']; ?></span>
                 </div>
                 <div class="mb-3 form-password-toggle">
                   <div class="d-flex justify-content-between">
                     <label class="form-label" for="password">Password</label>
-                    
                   </div>
                   <div class="input-group input-group-merge">
                     <input
@@ -126,10 +138,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                       placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                       aria-describedby="password" />
                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                  </div>
+                  </div>                  
+                  <span style="color: red;"><?php echo $errors['password']; ?></span>
                 </div>
                 <div class="mb-3">
-                  <a href="auth-forgot-password-basic.html">
+                  <a href="forgot_password.php">
                       <small>Forgot Password?</small>
                     </a>
                 </div>
