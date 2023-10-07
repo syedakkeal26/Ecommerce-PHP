@@ -2,39 +2,46 @@
 session_start();
 include('config.php'); // Include your database connection
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['email'];
-    $password = $_POST['password']; // Removed md5 hashing
+$errors = array(
+    'email' => '',
+    'password' => ''
+);
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $password = $_POST['password'];
+
+    $_SESSION['email'] = $email ;
     // Authenticate the user (replace with your authentication logic)
     $query = "SELECT id, email, password FROM users WHERE email = '$email'";
     $result = mysqli_query($conn, $query);
 
-    if ($result) { // Check if the query was successful
-        if ($result->num_rows == 1) {
-            $row = $result->fetch_assoc();
-            $storedPassword = $row['password'];
+    if ($result) {
+        if (mysqli_num_rows($result) == 1) {
+            $row = mysqli_fetch_assoc($result);
+            $hashed_password = $row['password'];
 
             // Verify the provided password against the stored hashed password
-            if (password_verify($password, $storedPassword)) {
+            if (password_verify($password, $hashed_password)) {
                 // Authentication successful
                 $_SESSION['user_id'] = $row['id'];
                 $_SESSION['user_email'] = $row['email'];
+                
 
                 // Redirect the user to a dashboard or another page
                 header("Location: index.php");
                 exit();
             } else {
                 // Incorrect password
-                $error = "Incorrect password.";
+                $errors['password'] = "Incorrect password.";
             }
         } else {
             // User with the provided email doesn't exist
-            $error = "User not found.";
+            $errors['email'] = "User not found.";
         }
     } else {
         // Query execution error
-        $error = "Error executing query: " . mysqli_error($conn);
+        $errors['database'] = "Error executing query: " . mysqli_error($conn);
     }
 }
 ?>
@@ -99,22 +106,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <!-- Register -->
           <div class="card">
             <div class="card-body">
-
               <div class="app-brand justify-content-center" >
-                <h4 class="mb-2">Login</h4>
+                <h4 class=" ">Login</h4>
               </div>
-              <div class="text-center">
-
-                  <?php
-                    if (isset($_GET['error']))
-                      {
-                        ?> <p class="error"> <?php echo $_GET['error']; ?> </p> <?php
-                         } ?>
-              </div>
-              <form id="formAuthentication" class="mb-3" action="login.php" method="POST">
+              <form id="formAuthentication" class="mb-3" action="" method="POST">
                 <div class="mb-3">
                   <label for="email" class="form-label">Email</label>
                   <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" value="<?php echo (isset($_SESSION['email'])) ? $_SESSION['email'] : '' ?>" autofocus />
+                  <span style="color: red;"><?php echo $errors['email']; ?></span>
                 </div>
                 <div class="mb-3 form-password-toggle">
                   <div class="d-flex justify-content-between">
@@ -124,11 +123,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="password" id="password" class="form-control" name="password" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                   </div>
-                  <a href="auth-forgot-password-basic.html">
-                    <small>Forgot Password?</small>
-                  </a>
+                  <span style="color: red;"><?php echo $errors['password']; ?></span>
                 </div>
-
+                <div class="mb-3">
+                  <a href="auth-forgot-password-basic.html">
+                      <small>Forgot Password?</small>
+                    </a>
+                </div>
                 <div class="mb-3">
                   <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
                 </div>

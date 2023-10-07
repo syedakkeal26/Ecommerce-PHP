@@ -59,9 +59,9 @@
                           </a>
                         </li>
                         <?php
-                          if(isset($_SESSION['user'])){
-                            $image = (!empty($user['photo'])) ? 'images/'.$user['photo'] : 'images/profile.jpg';
-                            echo '
+                          if(isset($_SESSION[''])){
+                           $image = (!empty($user['photo'])) ? 'images/'.$user['photo'] : 'images/profile.jpg';
+                           echo '
                               <li class="dropdown user user-menu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                   <img src="'.$image.'" class="user-image" alt="User Image">

@@ -1,69 +1,70 @@
-<!--  -->
-
 <?php
 
 include('config.php');
 
-if(isset($_POST['submit'])){
+if (isset($_POST['submit'])) {
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $password = $_POST['password'];
+    $cpassword = $_POST['cpassword'];
+    $mobile = $_POST['mobile'];
 
-   $username = mysqli_real_escape_string($conn, $_POST['username']);
-   $email = mysqli_real_escape_string($conn, $_POST['email']);
-   // here it password is converted to encrypted form
-   $password = md5($_POST['password']);
-   $cpassword = md5($_POST['cpassword']);
-   $mobile = $_POST['mobile'];
+    $_SESSION['username'] = $username ;
+    $_SESSION['email'] = $email ;
+    $_SESSION['mobile'] = $mobile ;
 
-  $_SESSION['username'] = $username;
-  $_SESSION['email'] = $email;
-  $_SESSION['mobile'] = $mobile;
+    $errors = array(); // Use an associative array to store field-specific errors
 
-   // select data from the table
-   $select = " SELECT * FROM users WHERE email = '$email' and password = '$password' ";
-
-   $result = mysqli_query($conn, $select);
-
-   $error = array();
-
+    // Validation checks for each field
     if (empty($username)) {
-    $error[] = "Username is required";
-  }
+        $errors['username'] = "Username is required";
+    }
 
-  if (empty($email)) {
-    $error[] = "Email is required";
-  } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $error[] = "Invalid email format.";
-  }
+    if (empty($email)) {
+        $errors['email'] = "Email is required";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = "Invalid email format.";
+    }
 
-  if (empty($mobile)) {
-    $error[] = "Mobile number is required";
-  } elseif (!preg_match("/^[0-9]{10}$/", $mobile)) {
-    $error[] = "Invalid mobile number format.";
-  }
+    if (empty($mobile)) {
+        $errors['mobile'] = "Mobile number is required";
+    } elseif (!preg_match("/^[0-9]{10}$/", $mobile)) {
+        $errors['mobile'] = "Invalid mobile number format.";
+    }
 
-  if (empty($password)) {
-    $error[] = "Password is required";
-  }
+    if (empty($password)) {
+        $errors['password'] = "Password is required";
+    }
 
-   if(mysqli_num_rows($result) > 0){
-      // if user/admin enter the same details in table it shows
-      $error[] = 'User already exist!';
+    if ($password != $cpassword) {
+        $errors['cpassword'] = 'Password not matched!';
+    }
 
-   }else{
+    // Check if the email already exists in the database
+    $query = "SELECT * FROM users WHERE email = '$email'";
+    $result = mysqli_query($conn, $query);
 
-      if($password != $cpassword){
-         // if passwords are not match
-         $error[] = 'Password not matched!';
-      }else{
-         // insert the data to the table
-         $insert = "INSERT INTO users (username, email, password, mobile) VALUES('$username','$email','$password','$mobile')";
-         mysqli_query($conn, $insert);
-         // if data insert correctly then redirect to login page
-         header('location:login.php');
-      }
-   }
+    if (mysqli_num_rows($result) > 0) {
+        $errors['email'] = 'Email already exists!';
+    }
 
-};
+    // If no errors, proceed with registration
+    if (empty($errors)) {
+        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+        $insert_query = "INSERT INTO users (username, email, password, mobile) VALUES ('$username', '$email', '$hashed_password', '$mobile')";
+        $insert_result = mysqli_query($conn, $insert_query);
+
+        if ($insert_result) {
+            // Registration successful, redirect to login page
+            header('location: login.php');
+            exit();
+        } else {
+            $errors['database'] = 'Registration failed. Please try again later.';
+        }
+    }
+}
 ?>
+
 
 <!DOCTYPE html>
 <html
@@ -126,27 +127,20 @@ if(isset($_POST['submit'])){
                 <h4 class="mb-2">Register</h4>
               </div>
               <form id="formAuthentication" class="mb-3"  method="POST">
-                <div class="text-center">
-                  <?php
-                    if(isset($error)){
-                      foreach($error as $error){
-                        echo '<span style="color:#FF0000;allign:center"class="error-msg">'.$error.'</span>';
-                      };
-                    };
-                  ?>
-                </div>
                 <div class="mb-3">
                   <label for="username" class="form-label">Username</label>
                   <input type="text" class="form-control" id="username" name="username"  placeholder="Enter your username" value="<?php echo (isset($_SESSION['username'])) ? $_SESSION['username'] : '' ?>" autofocus />
+                  <span style="color: red;"><?php echo isset($errors['username']) ? $errors['username'] : ''; ?></span>
                 </div>
                 <div class="mb-3">
                   <label for="email" class="form-label">Email</label>
-                  <input type="text" class="form-control" id="email" name="email"  placeholder="Enter your email" value="<?php echo (isset($_SESSION['email'])) ? $_SESSION['email'] : '' ?>"
-                  />
+                  <input type="text" class="form-control" id="email" name="email"  placeholder="Enter your email" value="<?php echo (isset($_SESSION['email'])) ? $_SESSION['email'] : '' ?>"/>        
+                  <span style="color: red;"><?php echo isset($errors['email']) ? $errors['email'] : ''; ?></span>
                 </div>
                 <div class="mb-3">
                   <label for="mobile" class="form-label">Mobile Number</label>
                   <input type="number" class="form-control" id="mobile" name="mobile"  placeholder="Enter your mobile number" value="<?php echo (isset($_SESSION['mobile'])) ? $_SESSION['mobile'] : '' ?>" />
+                  <span style="color: red;"><?php echo isset($errors['mobile']) ? $errors['mobile'] : ''; ?></span>
                 </div>
                 <div class="mb-3 form-password-toggle">
                   <label class="form-label" for="password">Password</label>
@@ -154,6 +148,7 @@ if(isset($_POST['submit'])){
                     <input type="password" id="password" class="form-control" name="password"  placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                   </div>
+                  <span style="color: red;"><?php echo isset($errors['password']) ? $errors['password'] : ''; ?></span>
                 </div>
                 <div class="mb-3 form-password-toggle">
                   <label class="form-label" for="password">Confirm Password</label>
@@ -161,6 +156,7 @@ if(isset($_POST['submit'])){
                   <input type="password" id="cpassword" class="form-control" name="cpassword"  placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" aria-describedby="password" />
                     <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
                   </div>
+                  <span style="color: red;"><?php echo isset($errors['cpassword']) ? $errors['cpassword'] : ''; ?></span>
                 </div>
                 <input type="submit" name="submit" value="Register" class="btn btn-primary d-grid w-100">
               </form>
