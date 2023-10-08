@@ -20,7 +20,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($errors['email']) && empty($errors['password'])) {
 
-        $_SESSION['email'] = $email;
         
         
         $query = "SELECT * FROM users WHERE email = '$email'";
@@ -109,9 +108,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <!-- Register -->
           <div class="card">
             <div class="card-body">
-            <div class="app-brand justify-content-center" >
-                <h4 class="mb-2">Admin Login</h4>
-              </div>
+            <div class="text-center">
+                <h3>Admin Login</h3>
+            </div>
               <form id="formAuthentication" class="mb-3" action="login.php" method="POST">
                 <div class="mb-3">
                   <label for="email" class="form-label">Email</label>
@@ -121,7 +120,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     id="email"
                     name="email"
                     placeholder="Enter your email"
-                    value="<?php echo (isset($_SESSION['email'])) ? $_SESSION['email'] : '' ?>"
                     autofocus />
                     <span style="color: red;"><?php echo $errors['email']; ?></span>
                 </div>

@@ -125,8 +125,8 @@ if (isset($_POST['submit'])) {
           <!-- Register Card -->
           <div class="card">
             <div class="card-body">
-              <div class="app-brand justify-content-center" >
-                <h4 class="mb-2">Register</h4>
+              <div class="text-center" >
+                <h4>Register</h4>
               </div>
               <form id="formAuthentication" class="mb-3"  method="POST">
                 <div class="mb-3">

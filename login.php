@@ -108,9 +108,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <!-- Register -->
           <div class="card">
             <div class="card-body">
-              <div class="app-brand justify-content-center" >
-                <h4 class=" ">Login</h4>
-              </div>
+            <div class="text-center">
+                <h3>Login</h3>
+            </div>
               <form id="formAuthentication" class="mb-3" action="" method="POST">
                 <div class="mb-3">
                   <label for="email" class="form-label">Email</label>

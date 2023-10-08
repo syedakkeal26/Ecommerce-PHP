@@ -33,10 +33,12 @@ session_start();
          <header class="header_section">
             <div class="container">
                <nav class="navbar navbar-expand-lg custom_nav-container ">
-                  <a class="navbar-brand" href="index.html"><img width="250" src="famms-1.0.0/images/logo.png" alt="#" /></a>
-                  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class=""> </span>
-                  </button>
+                  <a href="index.php" class="app-brand-link">
+                  <h1 class="app-brand-text demo menu-text fw-bold ms-2">ECommerce</h1>
+               </a>
+               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+               </button>
                   <div class="collapse navbar-collapse" id="navbarSupportedContent">
                      <ul class="navbar-nav">
                         <li class="nav-item active">
@@ -59,21 +61,21 @@ session_start();
                            <a class="nav-link" href="contact.html">Contact</a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" href="cart.php">
-                          <i class="fa fa-shopping-cart"></i>
-                            <span class="label label-success cart_count"></span>
-                          </a>
+                           <a class="nav-link" href="cart.php">
+                              <i class="fa fa-shopping-cart"></i>
+                              <span class="label label-success cart_count"></span>
+                           </a>
                         </li>
                         <?php
-                           if (isset($_SESSION['user'])) {
-                              echo '<li><a href="logout.php">Logout</a></li>';
-                           }
-                           else{
-                              echo '<li><a href="login.php">Login</a>|</li>';
-                              echo '<li><a href="register.php">Signup</a></li>';
-                           }
-                           ?>
-                     </ul>
+                        if (isset($_SESSION['user'])) {
+                           echo '<li class="nav-item"><a href="logout.php" class="nav-link">Logout</a></li>';
+                        } else {
+                           echo '<li class="nav-item"><a href="login.php" class="nav-link">Login</a></li>';
+                           echo '<li class="nav-item">|</li>';
+                           echo '<li class="nav-item"><a href="register.php" class="nav-link">Signup</a></li>';
+                        }
+                        ?>
+                   </ul>
                   </div>
                </nav>
             </div>
