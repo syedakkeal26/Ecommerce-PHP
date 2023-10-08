@@ -18,37 +18,38 @@ $result = mysqli_query($conn, $sql);
                 ?>
                 
                 <div class="card">
-                    <h5 class="card-header text-center"> Manage Roles
-                        <a href="addrole.php">
-                            <button type="button" class="btn btn-success float-end">Add Role</button>
-                        </a>
-                    </h5>
-                            <!-- <div class="table-responsive text-nowrap">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Mobile</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="table-border-bottom-0">
-                                        <?php
-                                        while ($row = mysqli_fetch_assoc($result)) {
-                                            echo "<tr>";
-                                            echo "<td>" . $row['username'] . "</td>";
-                                            echo "<td>" . $row['email'] . "</td>";
-                                            echo "<td>" . $row['mobile'] . "</td>";
-                                            echo "<td>" . ($row['type'] == 1 ? "Admin" : "User") . "</td>";
-                                            echo "<td><a href='edit.php?id=" . $row['id'] . "'>Edit</a> | <a href='delete.php?id=" . $row['id'] . "'>Delete</a></td>";
-                                            echo "</tr>";
-                                        }
-                                        ?>
-                                    </tbody>
-                                </table>
-                            </div> -->
+                <h5 class="card-header text-center">
+                    Manage Roles
+                    <a href="addrole.php">
+                        <button type="button" class="btn btn-success float-end">Add Role</button>
+                    </a>
+                </h5>
+                <!-- <div class="table-responsive text-nowrap">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        <?php
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<tr>";
+                            echo "<td>" . $row['username'] . "</td>";
+                            echo "<td>" . $row['email'] . "</td>";
+                            echo "<td>" . $row['mobile'] . "</td>";
+                            echo "<td>" . ($row['type'] == 1 ? "Admin" : "User") . "</td>";
+                            echo "<td><a href='edit.php?id=" . $row['id'] . "'>Edit</a> | <a href='delete.php?id=" . $row['id'] . "'>Delete</a></td>";
+                            echo "</tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+                </div> -->
                             <div class="table-responsive text-nowrap">
                                 <table class="table table-hover progress-table text-center">
                             <thead>

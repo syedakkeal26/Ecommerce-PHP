@@ -10,6 +10,7 @@ $errors = array(
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = $_POST['password'];
+    $_SESSION['auth'] = $email;
     if (empty($email)) {
         $errors['email'] = "Email is required.";
     }
@@ -19,10 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($errors['email']) && empty($errors['password'])) {
-
-        
-        
-        $query = "SELECT * FROM users WHERE email = '$email'";
+     $query = "SELECT * FROM users WHERE email = '$email'";
         $result = mysqli_query($conn, $query);
         
 
@@ -36,6 +34,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   if ($row['type'] == '1') {
                     $_SESSION['admin'] = $row['id'];
                     $_SESSION['admin_name'] = $row['username'];
+                    $_SESSION['admin_email'] = $row['email'];
+                    $_SESSION['admin_mobile'] = $row['mobile'];
 
                         header('location: dashboard.php'); 
                         exit();
@@ -119,6 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     class="form-control"
                     id="email"
                     name="email"
+                    value="<?php echo (isset($_SESSION['auth'])) ? $_SESSION['auth'] : '';?>"
                     placeholder="Enter your email"
                     autofocus />
                     <span style="color: red;"><?php echo $errors['email']; ?></span>

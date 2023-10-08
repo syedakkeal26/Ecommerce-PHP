@@ -34,6 +34,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 if (password_verify($password, $stored_password)) {
                     if ($row['type'] == '0') {
                         $_SESSION['user'] = $row['id'];
+                        $_SESSION['username'] = $row['username'];
+                        $_SESSION['mobile'] = $row['mobile'];
+                        $_SESSION['email'] = $row['email'];
                         header('location: index.php'); 
                         exit();
                     } 

@@ -1,8 +1,6 @@
 <?php
-include ('config.php');
-session_start(); 
 
-
+include('header.php');
 ?>
 <!DOCTYPE html>
 <html>
@@ -40,25 +38,16 @@ session_start();
                   <span class="navbar-toggler-icon"></span>
                </button>
                   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                     <ul class="navbar-nav">
+                     <ul class="navbar-nav flex-row align-items-center ms-auto">
                         <li class="nav-item active">
                            <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
                         </li>
-                       <li class="nav-item dropdown">
-                           <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true"> <span class="nav-label">Pages <span class="caret"></span></a>
-                           <ul class="dropdown-menu">
-                              <li><a href="about.html">About</a></li>
-                              <li><a href="testimonial.html">Testimonial</a></li>
-                           </ul>
+                       
+                        <li class="nav-item">
+                           <a class="nav-link" href="product.php">Products</a>
                         </li>
                         <li class="nav-item">
-                           <a class="nav-link" href="product.html">Products</a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" href="blog_list.html">Blog</a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" href="contact.html">Contact</a>
+                           <a class="nav-link" href="contact.php">Contact</a>
                         </li>
                         <li class="nav-item">
                            <a class="nav-link" href="cart.php">
@@ -67,12 +56,56 @@ session_start();
                            </a>
                         </li>
                         <?php
-                        if (isset($_SESSION['user'])) {
-                           echo '<li class="nav-item"><a href="logout.php" class="nav-link">Logout</a></li>';
-                        } else {
-                           echo '<li class="nav-item"><a href="login.php" class="nav-link">Login</a></li>';
-                           echo '<li class="nav-item">|</li>';
-                           echo '<li class="nav-item"><a href="register.php" class="nav-link">Signup</a></li>';
+                       if (isset($_SESSION['user'])) {
+                        echo <<<HTML
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <div class="avatar avatar-online">
+                                        <img src="assets/img/avatars/1.png" alt="User Avatar" class="w-40 h-auto rounded-circle" />
+                                    </div>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <div class="d-flex">
+                                                <div class="flex-shrink-0 me-3">
+                                                    <div class="avatar avatar-online">
+                                                        <img src="assets/img/avatars/1.png" alt="User Avatar" class="w-40 h-auto rounded-circle" />
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <span class="fw-medium d-block">{$_SESSION['username']}</span>
+                                                    <small class="text-muted">User</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <div class="dropdown-divider"></div>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="profile.php">
+                                            <i class="bx bx-user me-2"></i>
+                                            <span class="align-middle">My Profile</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="logout.php">
+                                            <i class="bx bx-power-off me-2"></i>
+                                            <span class="align-middle">Log Out</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        HTML;
+                    }else {
+                           echo <<<HTML
+                           <li class="nav-item"><a href="login.php" class="nav-link">Login</a></li>
+                           <li class="nav-item">|</li>
+                           <li class="nav-item"><a href="register.php" class="nav-link">Signup</a></li>
+                        HTML;
                         }
                         ?>
                    </ul>
@@ -892,7 +925,6 @@ session_start();
                <div class="col-md-4">
                    <div class="full">
                       <div class="logo_footer">
-                        <a href="#"><img width="210" src="famms-1.0.0/images/logo.png" alt="#" /></a>
                       </div>
                       <div class="information_f">
                         <p><strong>ADDRESS:</strong> 28 White tower, Street Name New York City, USA</p>
@@ -912,8 +944,6 @@ session_start();
                            <li><a href="#">Home</a></li>
                            <li><a href="#">About</a></li>
                            <li><a href="#">Services</a></li>
-                           <li><a href="#">Testimonial</a></li>
-                           <li><a href="#">Blog</a></li>
                            <li><a href="#">Contact</a></li>
                         </ul>
                      </div>
@@ -924,8 +954,8 @@ session_start();
                         <ul>
                            <li><a href="#">Account</a></li>
                            <li><a href="#">Checkout</a></li>
-                           <li><a href="#">Login</a></li>
-                           <li><a href="#">Register</a></li>
+                           <li><a href="login.php">Login</a></li>
+                           <li><a href="register.php">Register</a></li>
                            <li><a href="#">Shopping</a></li>
                            <li><a href="#">Widget</a></li>
                         </ul>
@@ -963,7 +993,7 @@ session_start();
             Distributed By <a href="https://themewagon.com/" target="_blank">ThemeWagon</a>
 
          </p>
-      </div> -->
+      </div> -->  
       <!-- jQery -->
       <script src="famms-1.0.0/js/jquery-3.4.1.min.js"></script>
       <!-- popper js -->

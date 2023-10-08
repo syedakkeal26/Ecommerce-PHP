@@ -61,16 +61,16 @@ if (isset($_POST['submit'])) {
 ?>
       <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
-                <h4 class="py-3 mb-4"><span class="text-muted fw-light">My Profile / </span> Profile Details</h4>
+                <h4 class="text-center"><span class="text-muted fw-light"></span> Profile Details</h4>
 
                 <div class="row">
                   <div class="col-md-12"> 
                     <div class="card mb-4">
-                      <h5 class="card-header">Profile Details</h5>
+                      <h5 class="card-header"></h5>
                       <div class="card-body">
                         <div class="d-flex align-items-start align-items-sm-center gap-4">
                           <img
-                            src="../assets/img/avatars/1.png"
+                            src="assets/img/avatars/1.png"
                             alt="user-avatar"
                             class="d-block rounded"
                             height="100"
@@ -102,7 +102,7 @@ if (isset($_POST['submit'])) {
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-name">Username</label>
                           <div class="col-sm-10">
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter Name" value="<?php echo (isset($_SESSION['admin_name'])) ? $_SESSION['admin_name'] : '' ?>"/>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter Name" value="<?php echo (isset($_SESSION['username'])) ? $_SESSION['username'] : '' ?>"/>
                             <span style="color: red;"><?php echo isset($errors['username']) ? $errors['username'] : ''; ?></span>
                           </div>
                         </div>
@@ -118,7 +118,7 @@ if (isset($_POST['submit'])) {
                                 class="form-control"
                                 placeholder="Enter Email"
                                 aria-label="john.doe"
-                                aria-describedby="basic-default-email2" value="<?php echo isset($_SESSION['admin_email']) ? $_SESSION['admin_email'] : ''; ?>" />
+                                aria-describedby="basic-default-email2" value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>" />
                               </div>
                               <span style="color: red;"><?php echo isset($errors['email']) ? $errors['email'] : ''; ?></span>
                             <div class="form-text"></div>
@@ -133,7 +133,7 @@ if (isset($_POST['submit'])) {
                               name="mobile"
                               class="form-control phone-mask"
                               placeholder="12345 67890 "
-                              aria-describedby="basic-default-phone" value="<?php echo (isset($_SESSION['admin_mobile'])) ? $_SESSION['admin_mobile'] : '' ?>"/>
+                              aria-describedby="basic-default-phone" value="<?php echo (isset($_SESSION['mobile'])) ? $_SESSION['mobile'] : '' ?>"/>
                               <span style="color: red;"><?php echo isset($errors['mobile']) ? $errors['mobile'] : ''; ?></span>
                           </div>
                         </div>
@@ -197,7 +197,9 @@ if (isset($_POST['submit'])) {
                           <div class="col-sm-10">
                           <div class="mt-2">
                             <button type="submit" name="submit" class="btn btn-primary me-2">Save changes</button>
-                            <button type="reset" class="btn btn-outline-secondary">Cancel</button>
+                            <a href="index.php">
+                              <button type="reset" class="btn btn-outline-secondary">Cancel</button>
+                            </a>
                           </div>
                           </div>
                         </div>
