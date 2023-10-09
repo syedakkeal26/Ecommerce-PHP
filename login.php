@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($errors['email']) && empty($errors['password'])) {
 
         $_SESSION['email'] = $email;
-        
+
         $query = "SELECT * FROM users WHERE email = '$email'";
         $result = mysqli_query($conn, $query);
 
@@ -32,21 +32,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 // Verify the provided password against the stored hashed password
                 if (password_verify($password, $stored_password)) {
-                    if ($row['type'] == '0') {
+                    if ($row['type'] == '0'&& $row['status'] == '1') {
+
                         $_SESSION['user'] = $row['id'];
                         $_SESSION['username'] = $row['username'];
                         $_SESSION['mobile'] = $row['mobile'];
                         $_SESSION['email'] = $row['email'];
-                        header('location: index.php'); 
+                        header('location: index.php');
                         exit();
-                    } 
+                    }
+                    else{
+                      $errors['email'] = "User not found.";
+                    }
                 } else {
                     $errors['password'] = "Incorrect password.";
                 }
             } else {
                 $errors['email'] = "User not found.";
             }
-        } 
+        }
     }
 }
 ?>

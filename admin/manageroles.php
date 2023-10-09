@@ -1,4 +1,4 @@
-<?php include('header.php'); 
+<?php include('header.php');
 
 $sql = "SELECT * FROM users";
 $result = mysqli_query($conn, $sql);
@@ -8,15 +8,15 @@ $result = mysqli_query($conn, $sql);
 
             <div class="container-xxl flex-grow-1 container-p-y">
                 <h4 class="py-3 mb-4"><span class="text-muted fw-light">Roles /</span> Manage Roles</h4>
-                
-                <?php 
+
+                <?php
                 if (isset($_SESSION['success_message']) && !empty($_SESSION['success_message'])) {
                     $success_message = $_SESSION['success_message'];
                     unset($_SESSION['success_message']);
                     echo '<div class="alert alert-success">' . $success_message . '</div>';
                 }
                 ?>
-                
+
                 <div class="card">
                 <h5 class="card-header text-center">
                     Manage Roles
@@ -24,13 +24,14 @@ $result = mysqli_query($conn, $sql);
                         <button type="button" class="btn btn-success float-end">Add Role</button>
                     </a>
                 </h5>
-                <!-- <div class="table-responsive text-nowrap">
-                <table class="table table-hover">
+                <div class="table-responsive text-nowrap">
+                <table class="table table-hover progress-table text-center">
                     <thead>
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Mobile</th>
+                            <th>User Type</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -43,14 +44,15 @@ $result = mysqli_query($conn, $sql);
                             echo "<td>" . $row['email'] . "</td>";
                             echo "<td>" . $row['mobile'] . "</td>";
                             echo "<td>" . ($row['type'] == 1 ? "Admin" : "User") . "</td>";
-                            echo "<td><a href='edit.php?id=" . $row['id'] . "'>Edit</a> | <a href='delete.php?id=" . $row['id'] . "'>Delete</a></td>";
+                            echo "<td>" . ($row['status'] == 1 ? "Active" : "Inactive") . "</td>";
+                            echo "<td><a href='editrole.php?id=" . $row['id'] . "'>Edit</a> | <a href='deleterole.php?id=" . $row['id'] . "'>Delete</a></td>";
                             echo "</tr>";
                         }
                         ?>
                     </tbody>
                 </table>
-                </div> -->
-                            <div class="table-responsive text-nowrap">
+                </div>
+                            <!-- <div class="table-responsive text-nowrap">
                                 <table class="table table-hover progress-table text-center">
                             <thead>
                                 <tr>
@@ -267,7 +269,7 @@ $result = mysqli_query($conn, $sql);
                                 </tr>
                             </tbody>
                             </table>
-                        </div>
+                        </div> -->
                         </div>
                         <!--/ Hoverable Table rows -->
             </div>

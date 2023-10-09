@@ -28,15 +28,17 @@ if (isset($_POST['submit'])) {
 
     if (empty($mobile)) {
         $errors['mobile'] = "Mobile number is required";
-    } elseif (!preg_match("/^[0-9]{10}$/", $mobile)) {
-        $errors['mobile'] = "Invalid mobile number format.";
     }
+    // elseif (!preg_match("/^[0-9]{10}$/", $mobile)) {
+    //     $errors['mobile'] = "Invalid mobile number format.";
+    // }
 
     if (empty($password)) {
         $errors['password'] = "Password is required";
-    } elseif (strlen($password) < 8 || !preg_match("/[!@#\$%^&*()\-_=+{};:,<.>]/", $password)) {
-      $errors['password'] = "Password must be at least 8 characters long and contain at least one special character.";
-  }
+    }
+  //   elseif (strlen($password) < 8 || !preg_match("/[!@#\$%^&*()\-_=+{};:,<.>]/", $password)) {
+  //     $errors['password'] = "Password must be at least 8 characters long and contain at least one special character.";
+  // }
 
     if ($password != $cpassword) {
         $errors['cpassword'] = 'Password not matched!';
@@ -88,7 +90,7 @@ if (isset($_POST['submit'])) {
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    
+
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -136,7 +138,7 @@ if (isset($_POST['submit'])) {
                 </div>
                 <div class="mb-3">
                   <label for="email" class="form-label">Email</label>
-                  <input type="text" class="form-control" id="email" name="email"  placeholder="Enter your email" value="<?php echo (isset($_SESSION['email'])) ? $_SESSION['email'] : '' ?>"/>        
+                  <input type="text" class="form-control" id="email" name="email"  placeholder="Enter your email" value="<?php echo (isset($_SESSION['email'])) ? $_SESSION['email'] : '' ?>"/>
                   <span style="color: red;"><?php echo isset($errors['email']) ? $errors['email'] : ''; ?></span>
                 </div>
                 <div class="mb-3">

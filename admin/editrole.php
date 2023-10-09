@@ -1,20 +1,34 @@
 <?php
 
 include('header.php');
+$id= $_REQUEST['id'];
+$res=mysqli_query($conn,"SELECT * from users WHERE id=$id limit 1");
+    if($row=mysqli_fetch_array($res))
+    {
+    $username=$row['username'];
+    $email=$row['email'];
+    $mobile=$row['mobile'];
+    $type = $row['type'];
+    $status = $row['status'];
+
+    $_SESSION['username'] = $username ;
+    $_SESSION['email'] = $email ;
+    $_SESSION['mobile'] = $mobile ;
+    $_SESSION['type'] = $type ;
+    $_SESSION['status'] = $status ;
+    }
+    else
+    {
+    $result=mysqli_query($conn,"UPDATE users SET name='$Name', status='$Status' WHERE id=$id");
+    }
+
+
 if (isset($_POST['submit'])) {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $mobile = $_POST['mobile'];
     $type = $_POST['type'];
     $status = $_POST['status'];
-    $password = $_POST['password'];
-
-    $_SESSION['new_username'] = $username ;
-    $_SESSION['new_email'] = $email ;
-    $_SESSION['new_mobile'] = $mobile ;
-    $_SESSION['new_type'] = $type ;
-    $_SESSION['new_status'] = $status ;
-
 
     $errors = array(); // Use an associative array to store field-specific errors
 
@@ -36,13 +50,7 @@ if (isset($_POST['submit'])) {
     //     $errors['mobile'] = "Invalid mobile number format.";
     // }
 
-    if (empty($password)) {
-        $errors['password'] = "Password is required";
-    }
-  //   elseif (strlen($password) < 8 || !preg_match("/[!@#\$%^&*()\-_=+{};:,<.>]/", $password)) {
-  //     $errors['password'] = "Password must be at least 8 characters long and contain at least one special character.";
-  // }
-    
+
     // Check if the email already exists in the database
     $query = "SELECT * FROM users WHERE email = '$email'";
     $result = mysqli_query($conn, $query);
@@ -58,10 +66,7 @@ if (isset($_POST['submit'])) {
         $insert_result = mysqli_query($conn, $insert_query);
 
         if ($insert_result) {
-        unset($_SESSION['username']);
-        unset($_SESSION['email']);
-        unset($_SESSION['mobile']);
-        $_SESSION['success_message'] = 'New Role Created successfully.';
+        $_SESSION['success_message'] = 'Edited successfully.';
         header('Location: manageroles.php');
         exit();
         }
@@ -73,7 +78,7 @@ if (isset($_POST['submit'])) {
             <!-- Content -->
 
             <div class="container-xxl flex-grow-1 container-p-y">
-              <h4 class="py-3 mb-4"><span class="text-muted fw-light">Roles / <a href="manageroles.php">Manage Roles</a> /</span> Add Role</h4>
+              <h4 class="py-3 mb-4"><span class="text-muted fw-light">Roles / <a href="manageroles.php">Manage Roles</a> /</span> Edit Role</h4>
 
               <!-- Basic Layout & Basic with Icons -->
               <div class="row">
@@ -88,7 +93,7 @@ if (isset($_POST['submit'])) {
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-name">Username</label>
                           <div class="col-sm-10">
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter Name" value="<?php echo (isset($_SESSION['new_username'])) ? $_SESSION['new_username'] : '' ?>"/>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter Name" value="<?php echo (isset($_SESSION['username'])) ? $_SESSION['username'] : '' ?>"/>
                             <span style="color: red;"><?php echo isset($errors['username']) ? $errors['username'] : ''; ?></span>
                           </div>
                         </div>
@@ -104,7 +109,7 @@ if (isset($_POST['submit'])) {
                                 class="form-control"
                                 placeholder="Enter Email"
                                 aria-label="john.doe"
-                                aria-describedby="basic-default-email2" value="<?php echo isset($_SESSION['new_email']) ? $_SESSION['new_email'] : ''; ?>" />
+                                aria-describedby="basic-default-email2" value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>" />
                               </div>
                               <span style="color: red;"><?php echo isset($errors['email']) ? $errors['email'] : ''; ?></span>
                             <div class="form-text"></div>
@@ -119,7 +124,7 @@ if (isset($_POST['submit'])) {
                               name="mobile"
                               class="form-control phone-mask"
                               placeholder="12345 67890 "
-                              aria-describedby="basic-default-phone" value="<?php echo (isset($_SESSION['new_mobile'])) ? $_SESSION['new_mobile'] : '' ?>"/>
+                              aria-describedby="basic-default-phone" value="<?php echo (isset($_SESSION['mobile'])) ? $_SESSION['mobile'] : '' ?>"/>
                               <span style="color: red;"><?php echo isset($errors['mobile']) ? $errors['mobile'] : ''; ?></span>
                           </div>
                         </div>
@@ -127,8 +132,8 @@ if (isset($_POST['submit'])) {
                             <label class="col-sm-2 col-form-label" for="user-type">User Type</label>
                             <div class="col-sm-10">
                                 <select id="type" name="type" class="form-select" aria-describedby="user-type-help">
-                                  <option value="0" <?php echo (isset($_SESSION['new_type']) && $_SESSION['new_type'] === 'user') ? 'selected' : ''; ?>>User</option>
-                                  <option value="1" <?php echo (isset($_SESSION['new_type']) && $_SESSION['new_type'] === 'admin') ? 'selected' : ''; ?>>Admin</option>
+                                  <option value="0" <?php echo (isset($_SESSION['type'])) ? 'selected' : ''; ?>>User</option>
+                                  <option value="1" <?php echo (isset($_SESSION['type'])) ? 'selected' : ''; ?>>Admin</option>
                                 </select>
                                 <span id="user-type-help" class="form-text" style="color: red;"><?php echo isset($errors['type']) ? $errors['type'] : ''; ?></span>
                             </div>
@@ -137,28 +142,16 @@ if (isset($_POST['submit'])) {
                             <label class="col-sm-2 col-form-label" for="user-type">Status</label>
                             <div class="col-sm-10">
                                 <select id="status" name="status" class="form-select" aria-describedby="user-type-help">
-                                  <option value="1" <?php echo (isset($_SESSION['new_status']) && $_SESSION['new_status'] === 'Active') ? 'selected' : ''; ?>>Active</option>
-                                  <option value="0" <?php echo (isset($_SESSION['new_status']) && $_SESSION['new_status'] === 'Inactive') ? 'selected' : ''; ?>>Inactive</option>
+                                  <option value="1" <?php echo (isset($_SESSION['status']) && $_SESSION['status'] === 'Active') ? 'selected' : ''; ?>>Active</option>
+                                  <option value="0" <?php echo (isset($_SESSION['status']) && $_SESSION['status'] === 'Inactive') ? 'selected' : ''; ?>>Inactive</option>
                                 </select>
                                 <span id="user-type-help" class="form-text" style="color: red;"><?php echo isset($errors['status']) ? $errors['status'] : ''; ?></span>
                             </div>
                         </div>
-                        <div class="row mb-3">
-                          <label class="col-sm-2 col-form-label" for="basic-default-message">Password</label>
-                          <div class="col-sm-10">
-                            <input
-                            type="password"
-                              id="password"
-                              name="password"
-                              class="form-control"
-                              placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                              />
-                              <span style="color: red;"><?php echo isset($errors['password']) ? $errors['password'] : ''; ?></span>
-                          </div>
-                        </div>
+
                         <div class="row justify-content-end">
                           <div class="col-sm-10">
-                          <input type="submit" name="submit" value="ADD" class="btn btn-primary  ">
+                          <input type="submit" name="submit" value="Update" class="btn btn-primary ">
                           </div>
                         </div>
                       </form>
