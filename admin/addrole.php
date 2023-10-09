@@ -1,5 +1,5 @@
 <?php
-
+ob_start();
 include('header.php');
 if (isset($_POST['submit'])) {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
@@ -14,7 +14,6 @@ if (isset($_POST['submit'])) {
     $_SESSION['new_mobile'] = $mobile ;
     $_SESSION['new_type'] = $type ;
     $_SESSION['new_status'] = $status ;
-
 
     $errors = array(); // Use an associative array to store field-specific errors
 
@@ -58,9 +57,12 @@ if (isset($_POST['submit'])) {
         $insert_result = mysqli_query($conn, $insert_query);
 
         if ($insert_result) {
-        unset($_SESSION['username']);
-        unset($_SESSION['email']);
-        unset($_SESSION['mobile']);
+        unset($_SESSION['new_username']);
+        unset($_SESSION['new_email']);
+        unset($_SESSION['new_mobile']);
+        unset($_SESSION['new_type']);
+        unset($_SESSION['new_status']);
+        
         $_SESSION['success_message'] = 'New Role Created successfully.';
         header('Location: manageroles.php');
         exit();

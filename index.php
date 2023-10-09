@@ -60,8 +60,8 @@ include('header.php');
                         echo <<<HTML
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <div class="avatar avatar-online">
+                                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                 <div class="avatar avatar-online">
                                         <img src="assets/img/avatars/1.png" alt="User Avatar" class="w-40 h-auto rounded-circle" />
                                     </div>
                                 </a>

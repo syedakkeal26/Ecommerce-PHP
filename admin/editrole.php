@@ -1,79 +1,87 @@
 <?php
-
+ob_start();
 include('header.php');
-$id= $_REQUEST['id'];
-$res=mysqli_query($conn,"SELECT * from users WHERE id=$id limit 1");
-    if($row=mysqli_fetch_array($res))
-    {
-    $username=$row['username'];
-    $email=$row['email'];
-    $mobile=$row['mobile'];
-    $type = $row['type'];
-    $status = $row['status'];
 
-    $_SESSION['username'] = $username ;
-    $_SESSION['email'] = $email ;
-    $_SESSION['mobile'] = $mobile ;
-    $_SESSION['type'] = $type ;
-    $_SESSION['status'] = $status ;
-    }
-    else
-    {
-    $result=mysqli_query($conn,"UPDATE users SET name='$Name', status='$Status' WHERE id=$id");
-    }
+$username = '';
+$email = '';
+$mobile = '';
+$type = '';
+$status = '';
 
+if (isset($_REQUEST['id'])) {
+    $id = $_REQUEST['id'];
+
+    // Retrieve user data based on the ID
+    $res = mysqli_query($conn, "SELECT * FROM users WHERE id = $id LIMIT 1");
+
+    if ($row = mysqli_fetch_array($res)) {
+        $username = $row['username'];
+        $email = $row['email'];
+        $mobile = $row['mobile'];
+        $type = $row['type'];
+        $status = $row['status'];
+
+        $_SESSION['username'] = $username;
+        $_SESSION['email'] = $email;
+        $_SESSION['mobile'] = $mobile;
+        $_SESSION['type'] = $type;
+        $_SESSION['status'] = $status;
+    } else {
+        echo "User not found.";
+    }
+} else {
+    echo "No user ID provided.";
+}
+
+$errors = array(); 
 
 if (isset($_POST['submit'])) {
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $mobile = $_POST['mobile'];
-    $type = $_POST['type'];
-    $status = $_POST['status'];
+    $newUsername = mysqli_real_escape_string($conn, $_POST['username']);
+    $newEmail = mysqli_real_escape_string($conn, $_POST['email']);
+    $newMobile = $_POST['mobile'];
+    $newType = $_POST['type'];
+    $newStatus = $_POST['status'];
 
-    $errors = array(); // Use an associative array to store field-specific errors
-
-    // Validation checks for each field
-    if (empty($username)) {
+    if (empty($newUsername)) {
         $errors['username'] = "Username is required";
     }
 
-    if (empty($email)) {
+    if (empty($newEmail)) {
         $errors['email'] = "Email is required";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    } elseif (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = "Invalid email format.";
     }
 
-    if (empty($mobile)) {
+    if (empty($newMobile)) {
         $errors['mobile'] = "Mobile number is required";
     }
-    // elseif (!preg_match("/^[0-9]{10}$/", $mobile)) {
-    //     $errors['mobile'] = "Invalid mobile number format.";
-    // }
 
+    $emailCheckResult = mysqli_query($conn, "SELECT id FROM users WHERE email = '$newEmail' AND id != $id");
 
-    // Check if the email already exists in the database
-    $query = "SELECT * FROM users WHERE email = '$email'";
-    $result = mysqli_query($conn, $query);
-
-    if (mysqli_num_rows($result) > 0) {
-        $errors['email'] = 'Email already exists!';
+    if (mysqli_num_rows($emailCheckResult) > 0) {
+        $errors['email'] = 'Email already exists for another user.';
     }
 
-    // If no errors, proceed with registration
+    // If there are no errors, update the user's information
     if (empty($errors)) {
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-        $insert_query = "INSERT INTO users (username, email, password, mobile,type,status) VALUES ('$username', '$email', '$hashed_password', '$mobile','$type','$status')";
-        $insert_result = mysqli_query($conn, $insert_query);
+        $result = mysqli_query($conn, "UPDATE users SET username='$newUsername', email='$newEmail', mobile='$newMobile', type='$newType', status='$newStatus' WHERE id=$id");
 
-        if ($insert_result) {
-        $_SESSION['success_message'] = 'Edited successfully.';
-        header('Location: manageroles.php');
-        exit();
+        if ($result) {
+            $_SESSION['username'] = $newUsername;
+            $_SESSION['email'] = $newEmail;
+            $_SESSION['mobile'] = $newMobile;
+            $_SESSION['type'] = $newType;
+            $_SESSION['status'] = $newStatus;
+            $_SESSION['success_message'] = 'Role Edited successfully.';
+            header('Location: manageroles.php');
+            exit();
+        } else {
+            echo "Error: " . mysqli_error($conn);
+            // Handle the case where the update query fails
         }
     }
 }
 ?>
-
 <div class="content-wrapper">
             <!-- Content -->
 
@@ -109,7 +117,7 @@ if (isset($_POST['submit'])) {
                                 class="form-control"
                                 placeholder="Enter Email"
                                 aria-label="john.doe"
-                                aria-describedby="basic-default-email2" value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>" />
+                                aria-describedby="basic-default-email2" value="<?php echo (isset($_SESSION['email'])) ? $_SESSION['email'] : '' ?>" />
                               </div>
                               <span style="color: red;"><?php echo isset($errors['email']) ? $errors['email'] : ''; ?></span>
                             <div class="form-text"></div>
@@ -132,8 +140,8 @@ if (isset($_POST['submit'])) {
                             <label class="col-sm-2 col-form-label" for="user-type">User Type</label>
                             <div class="col-sm-10">
                                 <select id="type" name="type" class="form-select" aria-describedby="user-type-help">
-                                  <option value="0" <?php echo (isset($_SESSION['type'])) ? 'selected' : ''; ?>>User</option>
-                                  <option value="1" <?php echo (isset($_SESSION['type'])) ? 'selected' : ''; ?>>Admin</option>
+                                    <option value="0" <?php echo (isset($_SESSION['type']) && $_SESSION['type'] == 0) ? 'selected' : ''; ?>>User</option>
+                                    <option value="1" <?php echo (isset($_SESSION['type']) && $_SESSION['type'] == 1) ? 'selected' : ''; ?>>Admin</option>
                                 </select>
                                 <span id="user-type-help" class="form-text" style="color: red;"><?php echo isset($errors['type']) ? $errors['type'] : ''; ?></span>
                             </div>
@@ -142,8 +150,8 @@ if (isset($_POST['submit'])) {
                             <label class="col-sm-2 col-form-label" for="user-type">Status</label>
                             <div class="col-sm-10">
                                 <select id="status" name="status" class="form-select" aria-describedby="user-type-help">
-                                  <option value="1" <?php echo (isset($_SESSION['status']) && $_SESSION['status'] === 'Active') ? 'selected' : ''; ?>>Active</option>
-                                  <option value="0" <?php echo (isset($_SESSION['status']) && $_SESSION['status'] === 'Inactive') ? 'selected' : ''; ?>>Inactive</option>
+                                  <option value="1" <?php echo (isset($_SESSION['status']) && $_SESSION['status'] === '1') ? 'selected' : ''; ?>>Active</option>
+                                  <option value="0" <?php echo (isset($_SESSION['status']) && $_SESSION['status'] === '0') ? 'selected' : ''; ?>>Inactive</option>
                                 </select>
                                 <span id="user-type-help" class="form-text" style="color: red;"><?php echo isset($errors['status']) ? $errors['status'] : ''; ?></span>
                             </div>

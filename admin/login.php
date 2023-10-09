@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 // Verify the provided password against the stored hashed password
                 if (password_verify($password, $stored_password)) {
-                  if ($row['type'] == '1') {
+                  if ($row['type'] == '1' && $row['status'] == '1') {
                     $_SESSION['admin'] = $row['id'];
                     $_SESSION['admin_name'] = $row['username'];
                     $_SESSION['admin_email'] = $row['email'];
@@ -39,6 +39,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         header('location: dashboard.php'); 
                         exit();
+                    }else{
+                      $errors['email'] = "Admin not found.";
                     } 
                 } else {
                     $errors['password'] = "Incorrect password.";

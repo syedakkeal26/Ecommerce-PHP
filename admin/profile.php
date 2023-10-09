@@ -1,99 +1,145 @@
 <?php
-
+ob_start();
 include('header.php');
-if (isset($_POST['submit'])) {
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $mobile = $_POST['mobile'];
-    
-    $errors = array(); // Use an associative array to store field-specific errors
 
-    // Validation checks for each field
-    if (empty($username)) {
-        $errors['username'] = "Username is required";
-    }
+$username = '';
+$email = '';
+$mobile = '';
+$currentProfileImageUrl = '';
+if (isset($_SESSION['admin'])) {
+  $id = $_SESSION['admin'];
 
-    if (empty($email)) {
-        $errors['email'] = "Email is required";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = "Invalid email format.";
-    }
+  // Retrieve user data based on the ID
+  $res = mysqli_query($conn, "SELECT * FROM users WHERE id = $id LIMIT 1");
 
-    if (empty($mobile)) {
-        $errors['mobile'] = "Mobile number is required";
-    } 
-    // elseif (!preg_match("/^[0-9]{10}$/", $mobile)) {
-    //     $errors['mobile'] = "Invalid mobile number format.";
-    // }
+  if ($row = mysqli_fetch_array($res)) {
+      $username = $row['username'];
+      $email = $row['email'];
+      $mobile = $row['mobile'];
+      $currentProfileImageUrl = $row['profile_image_url'];
 
-    if (empty($password)) {
-        $errors['password'] = "Password is required";
-    } 
-  //   elseif (strlen($password) < 8 || !preg_match("/[!@#\$%^&*()\-_=+{};:,<.>]/", $password)) {
-  //     $errors['password'] = "Password must be at least 8 characters long and contain at least one special character.";
-  // }
-
-    // Check if the email already exists in the database
-    $query = "SELECT * FROM users WHERE email = '$email'";
-    $result = mysqli_query($conn, $query);
-
-    if (mysqli_num_rows($result) > 0) {
-        $errors['email'] = 'Email already exists!';
-    }
-
-    // If no errors, proceed with registration
-    if (empty($errors)) {
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-        $insert_query = "INSERT INTO users (username, email, password, mobile,type) VALUES ('$username', '$email', '$hashed_password', '$mobile','$type')";
-        $insert_result = mysqli_query($conn, $insert_query);
-
-        if ($insert_result) {
-        unset($_SESSION['username']);
-        unset($_SESSION['email']);
-        unset($_SESSION['mobile']);
-        unset($_SESSION['type']);
-        $_SESSION['success_message'] = 'New Role Created successfully.';
-        header('Location: manageroles.php');
-        exit();
-        } 
-    }
+      $_SESSION['username'] = $username;
+      $_SESSION['email'] = $email;
+      $_SESSION['mobile'] = $mobile;
+      $_SESSION['profile_image_url'] = $currentProfileImageUrl;
+  }
 }
+
+      $errors = array();
+
+      if (isset($_POST['image_submit'])) {
+      
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+          $uploadDir = '../uploads/';
+          $uploadFile = $uploadDir . basename($_FILES['image']['name']);
+
+          // Generate a unique file name to prevent overwriting
+          $uniqueFileName = uniqid() . '_' . $_FILES['image']['name'];
+          $uploadPath = $uploadDir . $uniqueFileName;
+
+          if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
+              $updateQuery = "UPDATE users SET profile_image_url = '$uploadPath' WHERE id = $id";
+              if (mysqli_query($conn, $updateQuery)) {
+                  $currentProfileImageUrl = $uploadPath;
+              } else {
+                  echo "Error updating profile image: " . mysqli_error($conn);
+              }
+          } else {
+              $errors['file'] = "Error uploading file.";
+          }
+      } else {
+        $errors['file'] = "No file uploaded or an error occurred during upload.";
+      }
+      }
+      if (isset($_POST['submit'])) {
+        $newUsername = mysqli_real_escape_string($conn, $_POST['username']);
+        $newEmail = mysqli_real_escape_string($conn, $_POST['email']);
+        $newMobile = $_POST['mobile'];
+
+
+        if (empty($newUsername)) {
+            $errors['username'] = "Username is required";
+        }
+
+        if (empty($newEmail)) {
+            $errors['email'] = "Email is required";
+        } elseif (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = "Invalid email format.";
+        }
+
+        if (empty($newMobile)) {
+            $errors['mobile'] = "Mobile number is required";
+        }
+
+        $emailCheckResult = mysqli_query($conn, "SELECT id FROM users WHERE email = '$newEmail' AND id != $id");
+
+        if (mysqli_num_rows($emailCheckResult) > 0) {
+            $errors['email'] = 'Email already exists for another user.';
+        }
+
+        // If there are no errors, update the user's information
+        if (empty($errors)) {
+            $result = mysqli_query($conn, "UPDATE users SET username='$newUsername', email='$newEmail', mobile='$newMobile' WHERE id=$id");
+
+            if ($result) {
+                $_SESSION['username'] = $newUsername;
+                $_SESSION['email'] = $newEmail;
+                $_SESSION['mobile'] = $newMobile;
+                
+                $_SESSION['success_message'] = 'Profile Edited successfully.';
+                header('Location: profile.php');
+                exit();
+            } else {
+                echo "Error: " . mysqli_error($conn);
+                // Handle the case where the update query fails
+            }
+        }
+      }
 ?>
+
       <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
                 <h4 class="py-3 mb-4"><span class="text-muted fw-light">My Profile / </span> Profile Details</h4>
-
+                <?php
+                if (isset($_SESSION['success_message']) && !empty($_SESSION['success_message'])) {
+                    $success_message = $_SESSION['success_message'];
+                    unset($_SESSION['success_message']);
+                    echo '<div class="alert alert-success">' . $success_message . '</div>';
+                }
+                ?>
                 <div class="row">
                   <div class="col-md-12"> 
                     <div class="card mb-4">
                       <h5 class="card-header">Profile Details</h5>
                       <div class="card-body">
-                        <div class="d-flex align-items-start align-items-sm-center gap-4">
-                          <img
-                            src="../assets/img/avatars/1.png"
-                            alt="user-avatar"
-                            class="d-block rounded"
-                            height="100"
-                            width="100"
-                            id="uploadedAvatar" />
-                          <div class="button-wrapper">
-                            <label for="upload" class="btn btn-primary me-2 mb-4" tabindex="0">
-                              <span class="d-none d-sm-block">Upload new photo</span>
-                              <i class="bx bx-upload d-block d-sm-none"></i>
-                              <input
-                                type="file"
-                                id="upload"
-                                class="account-file-input"
-                                hidden
-                                accept="image/png, image/jpeg" />
-                            </label>
-                            <button type="button" class="btn btn-outline-secondary account-image-reset mb-4">
-                              <i class="bx bx-reset d-block d-sm-none"></i>
-                              <span class="d-none d-sm-block">Reset</span>
-                            </button>
-
-                            <p class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
-                          </div>
+                      <div class="d-flex align-items-start align-items-sm-center gap-4">
+                            <img
+                              src="<?php echo $currentProfileImageUrl; ?>"
+                                alt="user-avatar"
+                                class="d-block rounded"
+                                height="100"
+                                width="100"
+                                id="uploadedAvatar"
+                            />
+                            <div class="button-wrapper">
+                                <form method="POST" enctype="multipart/form-data">
+                                    <label for="image-upload"  tabindex="0">
+                                          
+                                        <input
+                                            type="file"
+                                            id="image-upload"
+                                            name="image"  
+                                            class="account-file-input"
+                                            accept="image/png, image/jpeg"
+                                        />
+                                      </label>
+                                      <button type="submit" name="image_submit" class="btn btn-outline-secondary ">
+                                        <span class="d-none d-sm-block">Upload</span>
+                                      </button>
+                                    </form>
+                                    <span style="color: red;"><?php echo isset($errors['file']) ? $errors['file'] : ''; ?></span>
+                                <p class="text-muted mb-0">Allowed JPG, GIF or PNG. Max size of 800K</p>
+                            </div>
                         </div>
                       </div>
                       <hr class="my-0" />
