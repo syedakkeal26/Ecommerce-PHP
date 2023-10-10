@@ -1,6 +1,7 @@
 <?php
 ob_start();
 include('header.php');
+$currentProfileImageUrl = '';
 
 if (isset($_POST['submit'])) {
     $name = mysqli_real_escape_string($conn, $_POST['name']);
@@ -15,7 +16,7 @@ if (isset($_POST['submit'])) {
     $_SESSION['stock'] = $stock;
     $_SESSION['category_id'] = $category_id;
 
-    $errors = array(); // Use an associative array to store field-specific errors
+    $errors = array();
 
     // Validation checks for each field
     if (empty($name)) {
@@ -42,22 +43,49 @@ if (isset($_POST['submit'])) {
         $errors['category_id'] = "Category is required";
     }
 
-    // If no errors, proceed with product addition
+    // Check if an image file was uploaded
+    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = '../uploads/';
+        $uploadFile = $uploadDir . basename($_FILES['image']['name']);
+    
+        // Generate a unique file name to prevent overwriting
+        $uniqueFileName = uniqid() . '_' . $_FILES['image']['name'];
+        $uploadPath = $uploadDir . $uniqueFileName;
+    
+        if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
+            // Update the image_path variable with the uploaded file path
+            $image_path = $uploadPath;
+        } else {
+            $errors['image'] = "Error uploading file.";
+        }
+    } else {
+        $errors['image'] = "No file uploaded or an error occurred during upload.";
+    }
+    
     if (empty($errors)) {
-        // SQL query to insert a product record
-        $insert_query = "INSERT INTO products (name, description, price, stock, category_id)
-                         VALUES ('$name', '$description', $price, $stock, $category_id)";
-
-        if (mysqli_query($conn, $insert_query)) {
-            unset($_SESSION['name']);
-            unset($_SESSION['description']);
-            unset($_SESSION['price']);
-            unset($_SESSION['stock']);
-            unset($_SESSION['category_id']);
-
-            $_SESSION['success_message'] = 'Product added successfully.';
-            header('Location: manageproducts.php');
-            exit();
+        // Use prepared statements to prevent SQL injection
+        $insert_query = "INSERT INTO products (name, description, price, stock, category_id, image)
+                         VALUES (?, ?, ?, ?, ?, ?)";
+    
+        $stmt = mysqli_prepare($conn, $insert_query);
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "ssdiss", $name, $description, $price, $stock, $category_id, $image_path);
+            if (mysqli_stmt_execute($stmt)) {
+                unset($_SESSION['name']);
+                unset($_SESSION['description']);
+                unset($_SESSION['price']);
+                unset($_SESSION['stock']);
+                unset($_SESSION['category_id']);
+    
+                $_SESSION['success_message'] = 'Product added successfully.';
+                header('Location: manageproducts.php');
+                exit();
+            } else {
+                $errors['database'] = "Error adding product to the database: " . mysqli_error($conn);
+            }
+            mysqli_stmt_close($stmt);
+        } else {
+            $errors['database'] = "Error preparing the database statement.";
         }
     }
 }
@@ -74,7 +102,7 @@ if (isset($_POST['submit'])) {
                         <h5 class="mb-0">Add Product</h5>
                     </div>
                     <div class="card-body">
-                        <form id="formProduct" class="mb-3" action="" method="POST">
+                    <form id="formProduct" class="mb-3" action="" method="POST" enctype="multipart/form-data">
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label" for="name">Product Name</label>
                                 <div class="col-sm-10">
@@ -82,13 +110,13 @@ if (isset($_POST['submit'])) {
                                     <span style="color: red;"><?php echo isset($errors['name']) ? $errors['name'] : ''; ?></span>
                                 </div>
                             </div>
-                            <!-- <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label" for="image">Product Image</label>
-                                <div class="col-sm-10">
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label" for="images">Product Images</label>
+                                    <div class="col-sm-10">
                                     <input type="file" class="form-control" id="image" name="image" value="<?php echo (isset($_SESSION['image'])) ? $_SESSION['image'] : ''; ?>" accept="image/png, image/jpeg" />
                                     <span style="color: red;"><?php echo isset($errors['image']) ? $errors['image'] : ''; ?></span>
                                 </div>
-                            </div> -->
+                                </div>
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label" for="description">Description</label>
                                 <div class="col-sm-10">

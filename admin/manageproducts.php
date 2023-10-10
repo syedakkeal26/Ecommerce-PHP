@@ -46,15 +46,12 @@ $result = mysqli_query($conn, $sql);
                                 $result = mysqli_query($conn, $query);
 
                                 $sno = ($currentPage - 1) * $recordsPerPage + 1;
-                                $image = (!empty($row['photo'])) ? '../uploads/'.$row['photo'] : 'default.jpg';
-                                while ($row = mysqli_fetch_assoc($result)) {
+                                                                while ($row = mysqli_fetch_assoc($result)) {
                                     echo "<tr>";
                                     echo "<td>$sno</td>";
                                     echo "<td>" . $row['name'] . "</td>";
                                     echo "<td>
-                              <img src='".$image."' height='30px' width='30px'>
-                              <span class='pull-right'><a href='#edit_photo' class='photo' data-toggle='modal' data-id='".$row['id']."'><i class='fa fa-edit'></i></a></span>
-                            </td>";
+                                    <img src='". $row['image']."' height='50px' width='50px'></td>";
                                     echo "<td>" . $row['description'] . "</td>";
                                     echo "<td>" . $row['price'] . "</td>";
                                     echo "<td>" . $row['stock'] . "</td>";
