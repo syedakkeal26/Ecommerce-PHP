@@ -41,26 +41,37 @@ if ($conn->connect_error) {
 //     ';
 //   }
 
-// for ($i = 1; $i <= 50; $i++) {
-//     $name = "Product " . $i;
-//     $description = "Description for Product " . $i;
-//     $price = rand(10, 100); // Random price between 10 and 100
-//     $stock = rand(0, 100); // Random stock quantity between 0 and 100
-//     $category = "Category " . rand(1, 5); // Random category
-//     $image_url = "image" . $i . ".jpg"; // Assuming image filenames follow a pattern
+// for ($i = 1; $i <= 25; $i++) {
+//   $name = "Product " . $i;
+//   $description = "Description for Product " . $i;
+//   $price = rand(10, 100); // Random price between 10 and 100
+//   $stock = rand(0, 100); // Random stock quantity between 0 and 100
+//   $category_id = 1; // Replace with the actual category ID you want to use
 
-//     // SQL query to insert a product record
-//     $sql = "INSERT INTO products (name, description, price, stock, category, image)
-//             VALUES ('$name', '$description', $price, $stock, '$category', '$image_url')";
+//   // Check if the category_id exists in the categories table
+//   $categoryCheckQuery = "SELECT COUNT(*) FROM categories WHERE id = $category_id";
+//   $categoryCheckResult = mysqli_query($conn, $categoryCheckQuery);
+//   $categoryExists = mysqli_fetch_array($categoryCheckResult)[0];
 
-//     // Execute the SQL query
-//     if ($conn->query($sql) === TRUE) {
-//         echo "Record $i inserted successfully<br>";
-//     } else {
-//         echo "Error inserting record: " . $conn->error . "<br>";
-//     }
+//   if ($categoryExists) {
+//       // The category_id exists, so you can proceed with the product insertion
+//       $sql = "INSERT INTO products (name, description, price, stock, category_id)
+//               VALUES ('$name', '$description', $price, $stock, $category_id)";
+
+//       if (mysqli_query($conn, $sql)) {
+//           echo "Record $i inserted successfully<br>";
+//       } else {
+//           echo "Error inserting record: " . mysqli_error($conn) . "<br>";
+//       }
+//   } else {
+//       echo "Category with ID $category_id does not exist.<br>";
+//   }
 // }
-
-// // Close the database connection
-// $conn->close();
+// $updateQuery = "UPDATE products SET image = 'default.jpg'";
+// if (mysqli_query($conn, $updateQuery)) {
+//     echo "Image updated to default.jpg for all products successfully.";
+// } else {
+//     echo "Error updating image: " . mysqli_error($conn);
+// }
+// Close the database connection
 ?>

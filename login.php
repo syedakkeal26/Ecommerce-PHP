@@ -112,12 +112,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container-xxl">
       <div class="authentication-wrapper authentication-basic container-p-y">
         <div class="authentication-inner">
-          <!-- Register -->
           <div class="card">
             <div class="card-body">
             <div class="text-center">
                 <h3>Login</h3>
-            </div>
+              </div>
               <form id="formAuthentication" class="mb-3" action="" method="POST">
                 <div class="mb-3">
                   <label for="email" class="form-label">Email</label>
@@ -150,9 +149,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   <span>Create an account</span>
                 </a>
               </p>
+              <!-- <a href="admin/login.php">Admin Login</a> -->
             </div>
           </div>
-          <!-- /Register -->
         </div>
       </div>
     </div>

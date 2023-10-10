@@ -4038,7 +4038,7 @@ textarea.form-control-lg {
   --bs-pagination-disabled-bg: #f7f8f9;
   --bs-pagination-disabled-border-color: rgba(67, 89, 113, 0.3);
   display: flex;
-  padding-left: 0;
+  padding-left: 0px;
   list-style: none;
 }
 

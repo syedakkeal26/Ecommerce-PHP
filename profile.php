@@ -34,7 +34,7 @@ if (isset($_SESSION['user'])) {
 $errors = array();
 
       if (isset($_POST['image_submit'])) {
-      
+
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
           $uploadDir = 'images/';
           $uploadFile = $uploadDir . basename($_FILES['image']['name']);
@@ -91,7 +91,7 @@ $errors = array();
                 $_SESSION['username'] = $newUsername;
                 $_SESSION['email'] = $newEmail;
                 $_SESSION['mobile'] = $newMobile;
-                
+
                 $_SESSION['success_message'] = 'Profile Edited successfully.';
                 header('Location: profile.php');
                 exit();
@@ -114,7 +114,7 @@ $errors = array();
                 }
                 ?>
                 <div class="row">
-                  <div class="col-md-12"> 
+                  <div class="col-md-12">
                     <div class="card mb-4">
                       <h5 class="card-header">Profile Details</h5>
                       <div class="card-body">
@@ -130,11 +130,11 @@ $errors = array();
                             <div class="button-wrapper">
                                 <form method="POST" enctype="multipart/form-data">
                                     <label for="image-upload"  tabindex="0">
-                                          
+
                                         <input
                                             type="file"
                                             id="image-upload"
-                                            name="image"  
+                                            name="image"
                                             class="account-file-input"
                                             accept="image/png, image/jpeg"
                                         />
@@ -158,7 +158,7 @@ $errors = array();
                             <span style="color: red;"><?php echo isset($errors['username']) ? $errors['username'] : ''; ?></span>
                           </div>
                         </div>
-                        
+
                         <div class="row mb-3">
                           <label class="col-sm-2 col-form-label" for="basic-default-email">Email</label>
                           <div class="col-sm-10">

@@ -28,6 +28,7 @@ $result = mysqli_query($conn, $sql);
                 <table class="table table-hover progress-table text-center">
                     <thead>
                         <tr>
+                            <th>S.No</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Mobile</th>
@@ -38,15 +39,18 @@ $result = mysqli_query($conn, $sql);
                     </thead>
                     <tbody class="table-border-bottom-0">
                         <?php
+                        $sno = 1;
                         while ($row = mysqli_fetch_assoc($result)) {
                             echo "<tr>";
+                            echo "<td>$sno</td>";
                             echo "<td>" . $row['username'] . "</td>";
                             echo "<td>" . $row['email'] . "</td>";
                             echo "<td>" . $row['mobile'] . "</td>";
                             echo "<td>" . ($row['type'] == 1 ? "Admin" : "User") . "</td>";
-                            echo "<td>" . ($row['status'] == 1 ? "Active" : "Inactive") . "</td>";
-                            echo "<td><a href='editrole.php?id=" . $row['id'] . "'>Edit</a> | <a href='deleterole.php?id=" . $row['id'] . "'>Delete</a></td>";
+                            echo '<td>' . ($row['status'] == 1 ? '<span class ="badge bg-label-success me-1">Active</span>' : '<span class="badge bg-label-danger me-1">Inactive</span>') . '</td>';
+                            echo '<td><a class="btn rounded-pill btn-primary" href="editrole.php?id=' . $row['id'] . '">Edit</a> | <a class="btn rounded-pill btn-danger" href="deleterole.php?id=' . $row['id'] . '">Delete</a></td>';
                             echo "</tr>";
+                            $sno++;
                         }
                         ?>
                     </tbody>

@@ -1,165 +1,150 @@
 <?php
 ob_start();
-
 include('header.php');
-if (isset($_POST['submit'])) {
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $password = $_POST['password'];
-    $mobile = $_POST['mobile'];
-    $type = $_POST['type'];
 
-    $_SESSION['username'] = $username ;
-    $_SESSION['email'] = $email ;
-    $_SESSION['mobile'] = $mobile ;
-    
+if (isset($_POST['submit'])) {
+    $name = mysqli_real_escape_string($conn, $_POST['name']);
+    $description = mysqli_real_escape_string($conn, $_POST['description']);
+    $price = $_POST['price'];
+    $stock = $_POST['stock'];
+    $category_id = $_POST['category_id'];
+
+    $_SESSION['name'] = $name;
+    $_SESSION['description'] = $description;
+    $_SESSION['price'] = $price;
+    $_SESSION['stock'] = $stock;
+    $_SESSION['category_id'] = $category_id;
 
     $errors = array(); // Use an associative array to store field-specific errors
 
     // Validation checks for each field
-    if (empty($username)) {
-        $errors['username'] = "Username is required";
+    if (empty($name)) {
+        $errors['name'] = "Product name is required";
     }
 
-    if (empty($email)) {
-        $errors['email'] = "Email is required";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = "Invalid email format.";
+    if (empty($description)) {
+        $errors['description'] = "Description is required";
     }
 
-    if (empty($mobile)) {
-        $errors['mobile'] = "Mobile number is required";
-    } 
-    // elseif (!preg_match("/^[0-9]{10}$/", $mobile)) {
-    //     $errors['mobile'] = "Invalid mobile number format.";
-    // }
-
-    if (empty($password)) {
-        $errors['password'] = "Password is required";
-    } 
-  //   elseif (strlen($password) < 8 || !preg_match("/[!@#\$%^&*()\-_=+{};:,<.>]/", $password)) {
-  //     $errors['password'] = "Password must be at least 8 characters long and contain at least one special character.";
-  // }
-
-    // Check if the email already exists in the database
-    $query = "SELECT * FROM users WHERE email = '$email'";
-    $result = mysqli_query($conn, $query);
-
-    if (mysqli_num_rows($result) > 0) {
-        $errors['email'] = 'Email already exists!';
+    if (empty($price)) {
+        $errors['price'] = "Price is required";
+    } elseif (!is_numeric($price) || $price <= 0) {
+        $errors['price'] = "Invalid price format";
     }
 
-    // If no errors, proceed with registration
+    if (empty($stock)) {
+        $errors['stock'] = "Stock quantity is required";
+    } elseif (!is_numeric($stock) || $stock < 0) {
+        $errors['stock'] = "Invalid stock quantity format";
+    }
+
+    if (empty($category_id)) {
+        $errors['category_id'] = "Category is required";
+    }
+
+    // If no errors, proceed with product addition
     if (empty($errors)) {
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-        $insert_query = "INSERT INTO users (username, email, password, mobile,type) VALUES ('$username', '$email', '$hashed_password', '$mobile','$type')";
-        $insert_result = mysqli_query($conn, $insert_query);
+        // SQL query to insert a product record
+        $insert_query = "INSERT INTO products (name, description, price, stock, category_id)
+                         VALUES ('$name', '$description', $price, $stock, $category_id)";
 
-        if ($insert_result) {
-        unset($_SESSION['username']);
-        unset($_SESSION['email']);
-        unset($_SESSION['mobile']);
-        unset($_SESSION['type']);
-        $_SESSION['success_message'] = 'New Role Created successfully.';
-        header('Location: manageroles.php');
-        exit();
-        } 
+        if (mysqli_query($conn, $insert_query)) {
+            unset($_SESSION['name']);
+            unset($_SESSION['description']);
+            unset($_SESSION['price']);
+            unset($_SESSION['stock']);
+            unset($_SESSION['category_id']);
+
+            $_SESSION['success_message'] = 'Product added successfully.';
+            header('Location: manageproducts.php');
+            exit();
+        }
     }
 }
 ?>
 
+<!-- Add Product Form -->
 <div class="content-wrapper">
-            <!-- Content -->
-
-            <div class="container-xxl flex-grow-1 container-p-y">
-              <h4 class="py-3 mb-4"><span class="text-muted fw-light">Products / <a href="manageproducts.php">Manage Products</a> /</span> Add Product</h4>
-
-              <!-- Basic Layout & Basic with Icons -->
-              <div class="row">
-                <!-- Basic Layout -->
-                <div class="col-xxl">
-                  <div class="card mb-4">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <h4 class="py-3 mb-4"><span class="text-muted fw-light">Products / <a href="manageproducts.php">Manage Products</a> /</span> Add Product</h4>
+        <div class="row">
+            <div class="col-xxl">
+                <div class="card mb-4">
                     <div class="card-header d-flex align-items-center justify-content-between">
-                      <h5 class="mb-0">Add Product</h5>
+                        <h5 class="mb-0">Add Product</h5>
                     </div>
                     <div class="card-body">
-                      <form id="formAuthentication" class="mb-3" action="" method="POST">
-                        <div class="row mb-3">
-                          <label class="col-sm-2 col-form-label" for="basic-default-name">Username</label>
-                          <div class="col-sm-10">
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter Name" value="<?php echo (isset($_SESSION['username'])) ? $_SESSION['username'] : '' ?>"/>
-                            <span style="color: red;"><?php echo isset($errors['username']) ? $errors['username'] : ''; ?></span>
-                          </div>
-                        </div>
-                        
-                        <div class="row mb-3">
-                          <label class="col-sm-2 col-form-label" for="basic-default-email">Email</label>
-                          <div class="col-sm-10">
-                            <div class="input-group input-group-merge">
-                              <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                class="form-control"
-                                placeholder="Enter Email"
-                                aria-label="john.doe"
-                                aria-describedby="basic-default-email2" value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>" />
-                              </div>
-                              <span style="color: red;"><?php echo isset($errors['email']) ? $errors['email'] : ''; ?></span>
-                            <div class="form-text"></div>
-                          </div>
-                        </div>
-                        <div class="row mb-3">
-                          <label class="col-sm-2 col-form-label" for="basic-default-phone">Mobile</label>
-                          <div class="col-sm-10">
-                            <input
-                              type="number"
-                              id="mobile"
-                              name="mobile"
-                              class="form-control phone-mask"
-                              placeholder="12345 67890 "
-                              aria-describedby="basic-default-phone" value="<?php echo (isset($_SESSION['mobile'])) ? $_SESSION['mobile'] : '' ?>"/>
-                              <span style="color: red;"><?php echo isset($errors['mobile']) ? $errors['mobile'] : ''; ?></span>
-                          </div>
-                        </div>
-                        <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="user-type">User Type</label>
-                            <div class="col-sm-10">
-                                <select id="type" name="type" class="form-select" aria-describedby="user-type-help">
-                                  <option value="0" <?php echo (isset($_SESSION['type']) && $_SESSION['type'] === 'user') ? 'selected' : ''; ?>>User</option>
-                                  <option value="1" <?php echo (isset($_SESSION['type']) && $_SESSION['type'] === 'admin') ? 'selected' : ''; ?>>Admin</option>
-                                </select>
-                                <span id="user-type-help" class="form-text" style="color: red;"><?php echo isset($errors['type']) ? $errors['type'] : ''; ?></span>
+                        <form id="formProduct" class="mb-3" action="" method="POST">
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label" for="name">Product Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter Product Name" value="<?php echo (isset($_SESSION['name'])) ? $_SESSION['name'] : ''; ?>" />
+                                    <span style="color: red;"><?php echo isset($errors['name']) ? $errors['name'] : ''; ?></span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="row mb-3">
-                          <label class="col-sm-2 col-form-label" for="basic-default-message">Password</label>
-                          <div class="col-sm-10">
-                            <input
-                            type="password"
-                              id="password"
-                              name="password"
-                              class="form-control"
-                              placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                              />
-                              <span style="color: red;"><?php echo isset($errors['password']) ? $errors['password'] : ''; ?></span>
-                          </div>
-                        </div>
-                        <div class="row justify-content-end">
-                          <div class="col-sm-10">
-                          <input type="submit" name="submit" value="ADD" class="btn btn-primary d-grid w-100">
-                          </div>
-                        </div>
-                      </form>
+                            <!-- <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label" for="image">Product Image</label>
+                                <div class="col-sm-10">
+                                    <input type="file" class="form-control" id="image" name="image" value="<?php echo (isset($_SESSION['image'])) ? $_SESSION['image'] : ''; ?>" accept="image/png, image/jpeg" />
+                                    <span style="color: red;"><?php echo isset($errors['image']) ? $errors['image'] : ''; ?></span>
+                                </div>
+                            </div> -->
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label" for="description">Description</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" id="description" name="description" placeholder="Enter Product Description"><?php echo (isset($_SESSION['description'])) ? $_SESSION['description'] : ''; ?></textarea>
+                                    <span style="color: red;"><?php echo isset($errors['description']) ? $errors['description'] : ''; ?></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label" for="price">Price</label>
+                                <div class="col-sm-10">
+                                    <input type="number" class="form-control" id="price" name="price" placeholder="Enter Price" value="<?php echo (isset($_SESSION['price'])) ? $_SESSION['price'] : ''; ?>" />
+                                    <span style="color: red;"><?php echo isset($errors['price']) ? $errors['price'] : ''; ?></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label" for="stock">Stock</label>
+                                <div class="col-sm-10">
+                                    <input type="number" class="form-control" id="stock" name="stock" placeholder="Enter Stock Quantity" value="<?php echo (isset($_SESSION['stock'])) ? $_SESSION['stock'] : ''; ?>" />
+                                    <span style="color: red;"><?php echo isset($errors['stock']) ? $errors['stock'] : ''; ?></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label" for="category_id">Category</label>
+                                <div class="col-sm-10">
+                                <select class="form-select" id="category_id" name="category_id">
+                                <option value="" selected>Select a Category</option>
+
+                                <?php
+                                $query = "SELECT id, name FROM categories";
+                                $result = mysqli_query($conn, $query);
+
+                                if ($result) {
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        $categoryId = $row['id'];
+                                        $categoryName = $row['name'];
+                                        echo "<option value='$categoryId'>$categoryName</option>";
+                                    }
+                                } else {
+                                    echo "<option value=''>Error fetching categories</option>";
+                                }
+                                ?>
+
+                            </select>
+                            <span style="color: red;"><?php echo isset($errors['category_id']) ? $errors['category_id'] : ''; ?></span>
+                                </div>
+                            </div>
+                            <div class="row justify-content-end">
+                                <div class="col-sm-10">
+                                    <input type="submit" name="submit" value="ADD" class="btn btn-primary" />
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          
-            <!-- / Content -->
-
-            
-
-            <div class="content-backdrop fade"></div>
-          </div>
+        </div>
+    </div>
+    <div class="content-backdrop fade"></div>
+</div>

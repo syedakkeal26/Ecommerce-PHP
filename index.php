@@ -1,6 +1,9 @@
 <?php
 
 include('header.php');
+
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -28,91 +31,7 @@ include('header.php');
    <body>
       <div class="hero_area">
          <!-- header section strats -->
-         <header class="header_section">
-            <div class="container">
-               <nav class="navbar navbar-expand-lg custom_nav-container ">
-                  <a href="index.php" class="app-brand-link">
-                  <h1 class="app-brand-text demo menu-text fw-bold ms-2">ECommerce</h1>
-               </a>
-               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
-               </button>
-                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                     <ul class="navbar-nav flex-row align-items-center ms-auto">
-                        <li class="nav-item active">
-                           <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
-                        </li>
-                       
-                        <li class="nav-item">
-                           <a class="nav-link" href="product.php">Products</a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" href="contact.php">Contact</a>
-                        </li>
-                        <li class="nav-item">
-                           <a class="nav-link" href="cart.php">
-                              <i class="fa fa-shopping-cart"></i>
-                              <span class="label label-success cart_count"></span>
-                           </a>
-                        </li>
-                        <?php
-                       if (isset($_SESSION['user'])) {
-                        echo <<<HTML
-                        <ul class="navbar-nav ms-auto">
-                            <li class="nav-item dropdown">
-                                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                 <div class="avatar avatar-online">
-                                        <img src="assets/img/avatars/1.png" alt="User Avatar" class="w-40 h-auto rounded-circle" />
-                                    </div>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-3">
-                                                    <div class="avatar avatar-online">
-                                                        <img src="assets/img/avatars/1.png" alt="User Avatar" class="w-40 h-auto rounded-circle" />
-                                                    </div>
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <span class="fw-medium d-block">{$_SESSION['username']}</span>
-                                                    <small class="text-muted">User</small>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <div class="dropdown-divider"></div>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="profile.php">
-                                            <i class="bx bx-user me-2"></i>
-                                            <span class="align-middle">My Profile</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="logout.php">
-                                            <i class="bx bx-power-off me-2"></i>
-                                            <span class="align-middle">Log Out</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                        HTML;
-                    }else {
-                           echo <<<HTML
-                           <li class="nav-item"><a href="login.php" class="nav-link">Login</a></li>
-                           <li class="nav-item">|</li>
-                           <li class="nav-item"><a href="register.php" class="nav-link">Signup</a></li>
-                        HTML;
-                        }
-                        ?>
-                   </ul>
-                  </div>
-               </nav>
-            </div>
-         </header>
+         
          <!-- end header section -->
          <!-- slider section -->
          <section class="slider_section ">
@@ -993,7 +912,7 @@ include('header.php');
             Distributed By <a href="https://themewagon.com/" target="_blank">ThemeWagon</a>
 
          </p>
-      </div> -->  
+      </div> -->
       <!-- jQery -->
       <script src="famms-1.0.0/js/jquery-3.4.1.min.js"></script>
       <!-- popper js -->

@@ -41,7 +41,7 @@ if (isset($_POST['submit'])) {
   //   elseif (strlen($password) < 8 || !preg_match("/[!@#\$%^&*()\-_=+{};:,<.>]/", $password)) {
   //     $errors['password'] = "Password must be at least 8 characters long and contain at least one special character.";
   // }
-    
+
     // Check if the email already exists in the database
     $query = "SELECT * FROM users WHERE email = '$email'";
     $result = mysqli_query($conn, $query);
@@ -62,7 +62,7 @@ if (isset($_POST['submit'])) {
         unset($_SESSION['new_mobile']);
         unset($_SESSION['new_type']);
         unset($_SESSION['new_status']);
-        
+
         $_SESSION['success_message'] = 'New Role Created successfully.';
         header('Location: manageroles.php');
         exit();

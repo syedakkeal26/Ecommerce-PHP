@@ -1,6 +1,6 @@
-<?php include('header.php'); 
+<?php include('header.php');
 
-$sql = "SELECT * FROM users";
+$sql = "SELECT * FROM categories";
 $result = mysqli_query($conn, $sql);
 ?>
 <div class="content-wrapper">
@@ -8,48 +8,46 @@ $result = mysqli_query($conn, $sql);
 
             <div class="container-xxl flex-grow-1 container-p-y">
                 <h4 class="py-3 mb-4"><span class="text-muted fw-light">Categories /</span> Manage Categories</h4>
-                
-                <?php 
+
+                <?php
                 if (isset($_SESSION['success_message']) && !empty($_SESSION['success_message'])) {
                     $success_message = $_SESSION['success_message'];
                     unset($_SESSION['success_message']);
                     echo '<div class="alert alert-success">' . $success_message . '</div>';
                 }
                 ?>
-                
+
                 <div class="card">
                     <h5 class="card-header text-center"> Manage Categories
                         <a href="addcategory.php">
                             <button type="button" class="btn btn-success float-end">Add Category</button>
                         </a>
                     </h5>
-                            <!-- <div class="table-responsive text-nowrap">
+                            <div class="table table-hover progress-table text-center">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
+                                          <th>S .no</th>
                                             <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Mobile</th>
-                                            <th>Status</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-border-bottom-0">
-                                        <?php
-                                        while ($row = mysqli_fetch_assoc($result)) {
-                                            echo "<tr>";
-                                            echo "<td>" . $row['username'] . "</td>";
-                                            echo "<td>" . $row['email'] . "</td>";
-                                            echo "<td>" . $row['mobile'] . "</td>";
-                                            echo "<td>" . ($row['type'] == 1 ? "Admin" : "User") . "</td>";
-                                            echo "<td><a href='edit.php?id=" . $row['id'] . "'>Edit</a> | <a href='delete.php?id=" . $row['id'] . "'>Delete</a></td>";
-                                            echo "</tr>";
-                                        }
-                                        ?>
+                                    <?php
+                                      $sno = 1;
+                                      while ($row = mysqli_fetch_assoc($result)) {
+                                          echo "<tr>";
+                                          echo "<td>$sno</td>";
+                                          echo "<td>" . $row['name'] . "</td>";
+                                          echo '<td><a class="btn rounded-pill btn-primary" href="editcategory.php?id=' . $row['id'] . '">Edit</a> | <a class="btn rounded-pill btn-danger" href="deletecategory.php?id=' . $row['id'] . '">Delete</a></td>';
+                                          echo "</tr>";
+                                          $sno++;
+                                      }
+                                      ?>
                                     </tbody>
                                 </table>
-                            </div> -->
-                            <div class="table-responsive text-nowrap">
+                            </div>
+                            <!-- <div class="table-responsive text-nowrap">
                                 <table class="table table-hover progress-table text-center">
                             <thead>
                                 <tr>
@@ -266,7 +264,7 @@ $result = mysqli_query($conn, $sql);
                                 </tr>
                             </tbody>
                             </table>
-                        </div>
+                        </div> -->
                         </div>
                         <!--/ Hoverable Table rows -->
             </div>
