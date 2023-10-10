@@ -39,7 +39,7 @@ $result = mysqli_query($conn, $sql);
                                           echo "<tr>";
                                           echo "<td>$sno</td>";
                                           echo "<td>" . $row['name'] . "</td>";
-                                          echo '<td><a class="btn rounded-pill btn-primary" href="editcategory.php?id=' . $row['id'] . '">Edit</a> | <a class="btn rounded-pill btn-danger" href="deletecategory.php?id=' . $row['id'] . '">Delete</a></td>';
+                                          echo '<td><a class="btn btn-outline-primary" href="editcategory.php?id=' . $row['id'] . '">Edit</a>  <a class="btn btn-outline-danger" href="deletecategory.php?id=' . $row['id'] . '">Delete</a></td>';
                                           echo "</tr>";
                                           $sno++;
                                       }

@@ -74,12 +74,12 @@ $id = $_SESSION['user'];
                </button>
                   <div class="collapse navbar-collapse" id="navbarSupportedContent">
                      <ul class="navbar-nav flex-row align-items-center ms-auto">
-                        <li class="nav-item active">
+                        <li class="nav-item">
                            <a class="nav-link" href="index.php">Home <span class="sr-only"></span></a>
                         </li>
 
                         <li class="nav-item">
-                           <a class="nav-link" href="product.php">Products</a>
+                           <a class="nav-link" href="products.php">Products</a>
                         </li>
                         <li class="nav-item">
                            <a class="nav-link" href="contact.php">Contact</a>

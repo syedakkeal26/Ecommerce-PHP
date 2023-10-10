@@ -43,33 +43,37 @@ if (isset($_POST['submit'])) {
         $errors['category_id'] = "Category is required";
     }
 
-    // Check if an image file was uploaded
-    if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    // Check if any files were uploaded
+    if (!empty($_FILES['images']['name'][0])) {
         $uploadDir = '../uploads/';
-        $uploadFile = $uploadDir . basename($_FILES['image']['name']);
-    
-        // Generate a unique file name to prevent overwriting
-        $uniqueFileName = uniqid() . '_' . $_FILES['image']['name'];
-        $uploadPath = $uploadDir . $uniqueFileName;
-    
-        if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
-            // Update the image_path variable with the uploaded file path
-            $image_path = $uploadPath;
-        } else {
-            $errors['image'] = "Error uploading file.";
+        $imageReferences = array();
+
+        // Iterate through each uploaded file
+        foreach ($_FILES['images']['name'] as $key => $fileName) {
+            $uploadFile = $uploadDir . basename($fileName);
+
+            // Generate a unique file name to prevent overwriting
+            $uniqueFileName = uniqid() . '_' . $fileName;
+            $uploadPath = $uploadDir . $uniqueFileName;
+
+            // Check if the file upload was successful
+            if (move_uploaded_file($_FILES['images']['tmp_name'][$key], $uploadPath)) {
+                $imageReferences[] = $uploadPath; // Add the reference to the array
+            } else {
+                $errors['images'][] = "Error uploading file: " . $_FILES['images']['error'][$key];
+            }
         }
-    } else {
-        $errors['image'] = "No file uploaded or an error occurred during upload.";
-    }
-    
-    if (empty($errors)) {
-        // Use prepared statements to prevent SQL injection
-        $insert_query = "INSERT INTO products (name, description, price, stock, category_id, image)
+
+        // Convert the array of references to a comma-separated string
+        $imageReferencesString = implode(',', $imageReferences);
+
+        // Insert the image references into the database
+        $insertQuery = "INSERT INTO products (name, description, price, stock, category_id, image)
                          VALUES (?, ?, ?, ?, ?, ?)";
-    
-        $stmt = mysqli_prepare($conn, $insert_query);
+        
+        $stmt = mysqli_prepare($conn, $insertQuery);
         if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "ssdiss", $name, $description, $price, $stock, $category_id, $image_path);
+            mysqli_stmt_bind_param($stmt, "ssdiss", $name, $description, $price, $stock, $category_id, $imageReferencesString);
             if (mysqli_stmt_execute($stmt)) {
                 unset($_SESSION['name']);
                 unset($_SESSION['description']);
@@ -110,13 +114,17 @@ if (isset($_POST['submit'])) {
                                     <span style="color: red;"><?php echo isset($errors['name']) ? $errors['name'] : ''; ?></span>
                                 </div>
                             </div>
-                                <div class="row mb-3">
-                                    <label class="col-sm-2 col-form-label" for="images">Product Images</label>
-                                    <div class="col-sm-10">
-                                    <input type="file" class="form-control" id="image" name="image" value="<?php echo (isset($_SESSION['image'])) ? $_SESSION['image'] : ''; ?>" accept="image/png, image/jpeg" />
-                                    <span style="color: red;"><?php echo isset($errors['image']) ? $errors['image'] : ''; ?></span>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label" for="images">Product Images</label>
+                                <div class="col-sm-10">
+                                    <div id="image-upload-container">
+                                        <input type="file" class="form-control" name="images[]" accept="image/png, image/jpeg" />
+                                    </div>
+                                    <button type="button" id="add-image-input" class="btn btn-primary">Add More Images</button>
+                                    <button type="button" id="remove-image-input" class="btn btn-danger">Close</button>
+                                    <span style="color: red;"><?php echo isset($errors['images']) ? $errors['images'] : ''; ?></span>
                                 </div>
-                                </div>
+                            </div>
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label" for="description">Description</label>
                                 <div class="col-sm-10">
@@ -176,3 +184,26 @@ if (isset($_POST['submit'])) {
     </div>
     <div class="content-backdrop fade"></div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("image-upload-container");
+        const addImageButton = document.getElementById("add-image-input");
+        const removeImageButton = document.getElementById("remove-image-input");
+
+        addImageButton.addEventListener("click", function () {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.className = "form-control";
+            input.name = "images[]";
+            input.accept = "image/png, image/jpeg";
+            container.appendChild(input);
+        });
+
+        removeImageButton.addEventListener("click", function () {
+            const inputs = container.querySelectorAll("input[type='file']");
+            if (inputs.length > 1) {
+                container.removeChild(inputs[inputs.length - 1]);
+            }
+        });
+    });
+</script>   

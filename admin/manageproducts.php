@@ -37,7 +37,7 @@ $result = mysqli_query($conn, $sql);
                                 </tr>
                             </thead>
                             <tbody class="table-border-bottom-0">
-                                <?php
+                            <?php
                                 $recordsPerPage = 6;
                                 $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
                                 $offset = ($currentPage - 1) * $recordsPerPage;
@@ -45,19 +45,32 @@ $result = mysqli_query($conn, $sql);
                                 $query = "SELECT * FROM products LIMIT $offset, $recordsPerPage";
                                 $result = mysqli_query($conn, $query);
 
-                                $sno = ($currentPage - 1) * $recordsPerPage + 1;
-                                                                while ($row = mysqli_fetch_assoc($result)) {
-                                    echo "<tr>";
-                                    echo "<td>$sno</td>";
-                                    echo "<td>" . $row['name'] . "</td>";
-                                    echo "<td>
-                                    <img src='". $row['image']."' height='50px' width='50px'></td>";
-                                    echo "<td>" . $row['description'] . "</td>";
-                                    echo "<td>" . $row['price'] . "</td>";
-                                    echo "<td>" . $row['stock'] . "</td>";
-                                    echo '<td><a class="btn rounded-pill btn-primary" href="editproduct.php?id=' . $row['id'] . '">Edit</a> | <a class="btn rounded-pill btn-danger" href="deleteproduct.php?id=' . $row['id'] . '">Delete</a></td>';
-                                    echo "</tr>";
-                                    $sno++;
+                                if ($result && mysqli_num_rows($result) > 0) {
+                                    $sno = ($currentPage - 1) * $recordsPerPage + 1;
+
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        echo "<tr>";
+                                        echo "<td>$sno</td>";
+                                        echo "<td>" . $row['name'] . "</td>";
+                                        echo "<td>";
+                                        
+                                        // Display only the first image from the comma-separated list
+                                        $imageReferences = explode(',', $row['image']);
+                                        if (!empty($imageReferences[0])) {
+                                            echo "<img src='" . $imageReferences[0] . "' alt='Image' height='50px' width='50px'>";
+                                        }
+                                        
+                                        echo "</td>";
+                                        echo "<td>" . $row['description'] . "</td>";
+                                        echo "<td>" . $row['price'] . "</td>";
+                                        echo "<td>" . $row['stock'] . "</td>";
+                                        echo '<td><a class="btn rounded-pill btn-outline-primary" href="editproduct.php?id=' . $row['id'] . '">Edit</a>  <a class="btn rounded-pill btn-outline-danger" href="deleteproduct.php?id=' . $row['id'] . '">Delete</a></td>';
+                                        echo "</tr>";
+                                        $sno++;
+                                    }
+                                } else {
+                                    // No products found
+                                    echo 'No products found.';
                                 }
                                 ?>
                             </tbody>

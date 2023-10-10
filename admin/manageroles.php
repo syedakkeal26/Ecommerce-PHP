@@ -48,7 +48,7 @@ $result = mysqli_query($conn, $sql);
                             echo "<td>" . $row['mobile'] . "</td>";
                             echo "<td>" . ($row['type'] == 1 ? "Admin" : "User") . "</td>";
                             echo '<td>' . ($row['status'] == 1 ? '<span class ="badge bg-label-success me-1">Active</span>' : '<span class="badge bg-label-danger me-1">Inactive</span>') . '</td>';
-                            echo '<td><a class="btn rounded-pill btn-primary" href="editrole.php?id=' . $row['id'] . '">Edit</a> | <a class="btn rounded-pill btn-danger" href="deleterole.php?id=' . $row['id'] . '">Delete</a></td>';
+                            echo '<td><a class="btn rounded-pill btn-outline-primary" href="editrole.php?id=' . $row['id'] . '">Edit</a>  <a class="btn rounded-pill btn-outline-danger" href="deleterole.php?id=' . $row['id'] . '">Delete</a></td>';
                             echo "</tr>";
                             $sno++;
                         }
