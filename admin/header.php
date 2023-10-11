@@ -133,6 +133,21 @@ if ($row = mysqli_fetch_array($res)) {
                 </li>
               </ul>
             </li>
+
+            <li class="menu-item">
+              <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-shopping-bag"></i>
+                <div data-i18n="Categories">Orders</div>
+              </a>
+              <ul class="menu-sub">
+                <li class="menu-item">
+                  <!-- <a href="manageorders.php" class="menu-link"> -->
+                  <a href="" class="menu-link">
+                    <div data-i18n="Manage Orders">Manage Orders</div>
+                  </a>
+                </li>
+              </ul>
+            </li>
           </ul>
         </aside>
         <!-- / Menu -->

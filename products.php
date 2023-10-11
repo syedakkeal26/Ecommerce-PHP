@@ -1,6 +1,11 @@
 
 <?php
+ob_start();
 include('header.php');
+if (!isset($_SESSION['user'])) {
+   header('Location: login.php'); 
+   exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -35,41 +40,47 @@ include('header.php');
                </h2>
             </div>
             <div class="row">
-                <?php
-                // Assuming $conn is your database connection
-                $category_id = 1; // Replace with the correct category_id for "shirts"
+    <?php
+    $query = "SELECT * FROM products";
+    $result = mysqli_query($conn, $query);
 
-                $query = "SELECT * FROM products ";
-                $result = mysqli_query($conn, $query);
-
-                if ($result && mysqli_num_rows($result) > 0) {
-                    while ($product = mysqli_fetch_assoc($result)) {
-                        echo '<div class="col-sm-6 col-md-4 col-lg-4">';
-                        echo '<div class="box">';
-                        echo '<div class="option_container">';
-                        echo '<div class="options">';
-                        echo '<a href="cart.php" class="option1">Add To Cart</a>';
-                        echo '<a href="buy.php" class="option2">Buy Now</a>';
-                        echo '</div>';
-                        echo '</div>';
-                        echo '<div class="img-box">';
-                        $imageReferences = explode(',', $product['image']);
-                        if (!empty($imageReferences[0])) {
-                          echo '<img src="./uploads/' . $imageReferences[0] . '" alt="' . $product['name'] . '" >';
-                        }
-                        echo '</div>';
-                        echo '<div class="detail-box">';
-                        echo '<h5>' . $product['name'] . '</h5><br>';
-                        echo '<h6>₹' . $product['price'] . '</h6>';
-                        echo '</div>';
-                        echo '</div>';
-                        echo '</div>';
-                    }
-                } else {
-                    echo 'No products found in this category.';
-                }
-                ?>
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($product = mysqli_fetch_assoc($result)) {
+            echo '<div class="col-sm-6 col-md-4 col-lg-4">
+                <div class="box">
+                    <div class="option_container">
+                        <div class="options">
+                            <form method="post" action="cart.php">
+                                <input type="hidden" name="product_id" value="' . $product['id'] . '">
+                                <input type="number" name="quantity" value="1" min="1">
+                                <input type="submit" class="option1" value="Add To Cart">
+                            </form>
+                            <br>
+                            <form action="cart.php" method="POST">
+                              <input type="submit" class="option2" value="Buy Now">
+                           </form>
+                        </div>
+                    </div>
+                    <div class="img-box">';
+           
+            $imageReferences = explode(',', $product['image']);
+            if (!empty($imageReferences[0])) {
+                echo '<img src="./uploads/' . $imageReferences[0] . '" alt="' . $product['name'] . '">';
+            }
+            
+            echo '</div>
+                <div class="detail-box">
+                    <h5>' . $product['name'] . '</h5><br>
+                    <h6>₹' . $product['price'] . '</h6>
+                </div>
             </div>
+        </div>';
+        }
+    } else {
+        echo 'No products found in this category.';
+    }
+    ?>
+</div>
                <!-- <div class="col-sm-6 col-md-4 col-lg-4">
                   <div class="box">
                      <div class="option_container">
@@ -546,6 +557,28 @@ include('header.php');
          </p>
       </div> -->
       <!-- jQery -->
+      <!-- <script>
+$(document).ready(function () {
+    // Initialize cart quantity to 0
+    var cartQuantity = 0;
+
+    // Listen for form submissions
+    $('.add-to-cart-form').submit(function (event) {
+        event.preventDefault(); // Prevent the form from submitting
+
+        var form = $(this);
+        var productId = form.find('input[name="product_id"]').val();
+        var quantity = form.find('input[name="quantity"]').val();
+
+        // You can add the product with productId and quantity to the cart here
+        // Increment cartQuantity accordingly
+        cartQuantity += parseInt(quantity);
+
+        // Update the cart count in the navigation bar
+        $('.cart_count').text(cartQuantity);
+    });
+});
+</script> -->
       <script src="famms-1.0.0/js/jquery-3.4.1.min.js"></script>
       <!-- popper js -->
       <script src="famms-1.0.0/js/popper.min.js"></script>

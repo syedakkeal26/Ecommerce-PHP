@@ -2,73 +2,102 @@
 ob_start();
 include('header.php');
 
-if (isset($_POST['submit'])) {
-    $name = mysqli_real_escape_string($conn, $_POST['name']);
-    $description = mysqli_real_escape_string($conn, $_POST['description']);
-    $price = $_POST['price'];
-    $stock = $_POST['stock'];
-    $category_id = $_POST['category_id'];
-    $productId = $_POST['product_id']; // Added product_id
+function handleNewImageUploads($newImages, $existingImages) {
+    $uploadDir = '../uploads/';
+    $newImageReferences = [];
 
-    // Validation
-    $errors = array();
-
-    if (empty($name)) {
-        $errors['name'] = "Product name is required";
-    }
-
-    if (empty($description)) {
-        $errors['description'] = "Description is required";
-    }
-
-    if (empty($price) || !is_numeric($price) || $price <= 0) {
-        $errors['price'] = "Invalid price format";
-    }
-
-    if (empty($stock) || !is_numeric($stock) || $stock < 0) {
-        $errors['stock'] = "Invalid stock quantity format";
-    }
-
-    if (empty($category_id)) {
-        $errors['category_id'] = "Category is required";
-    }
-
-    if (!empty($_FILES['images']['name'][0])) {
-      $uploadDir = '../uploads/';
-      $new_filenames = array();
-
-      foreach ($_FILES['images']['name'] as $key => $filename) {
-          $ext = pathinfo($filename, PATHINFO_EXTENSION);
-          $new_filename = uniqid() . '.' . $ext;
-          $new_filenames[] = $new_filename;
-
-          move_uploaded_file($_FILES['images']['tmp_name'][$key], $uploadDir . $new_filename);
-      }
-  } else {
-      $new_filenames = array();
-  }
-
-    if (empty($errors)) {
-        $imageReferencesString = implode(',', $new_filenames);
-
-        $updateQuery = "UPDATE products SET name=?, description=?, price=?, stock=?, category_id=?, image=? WHERE id=?";
-        $stmt = mysqli_prepare($conn, $updateQuery);
-
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "ssdissi", $name, $description, $price, $stock, $category_id, $imageReferencesString, $productId);
-
-            if (mysqli_stmt_execute($stmt)) {
-                $_SESSION['success_message'] = 'Product updated successfully';
-                header('Location: manageproducts.php');
-                exit();
-            } else {
-                $errors['database'] = "Error updating product: " . mysqli_error($conn);
-            }
-
-            mysqli_stmt_close($stmt);
-        } else {
-            $errors['database'] = "Error preparing the database statement";
+    foreach ($newImages['name'] as $key => $filename) {
+        if ($newImages['error'][$key] === UPLOAD_ERR_OK) {
+            $ext = pathinfo($filename, PATHINFO_EXTENSION);
+            $newFilename = uniqid() . '.' . $ext;
+            $newImageReferences[] = $newFilename;
+            move_uploaded_file($newImages['tmp_name'][$key], $uploadDir . $newFilename);
         }
+    }
+
+    // Merge the existing and new images
+    $updatedImages = array_merge($existingImages, $newImageReferences);
+
+    return implode(',', $updatedImages);
+}
+
+if (isset($_POST['submit'])) {
+    $productId = mysqli_real_escape_string($conn, $_POST['product_id']);
+
+    // Retrieve existing product data from the database
+    $query = "SELECT * FROM products WHERE id = $productId";
+    $result = mysqli_query($conn, $query);
+
+    if (!$result) {
+        // Handle the query error (you can add more detailed error handling)
+        echo 'Error: ' . mysqli_error($conn);
+        exit();
+    }
+
+    if (mysqli_num_rows($result) > 0) {
+        $productData = mysqli_fetch_assoc($result);
+
+        // Existing images as an array
+        $existingImages = explode(',', $productData['image']);
+
+        // Handle new image uploads
+        if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
+            $newImages = handleNewImageUploads($_FILES['images'], $existingImages);
+        } else {
+            $newImages = $existingImages; // Keep the existing images as they are
+        }
+
+        // Convert the updated image references back to a comma-separated string
+        $imageReferencesString = implode(',', (array) $newImages);
+
+        // Retrieve and sanitize other product data
+        $name = mysqli_real_escape_string($conn, $_POST['name']);
+        $description = mysqli_real_escape_string($conn, $_POST['description']);
+        $price = $_POST['price'];
+        $stock = $_POST['stock'];
+        $category_id = $_POST['category_id'];
+
+        // Other validation and update code goes here
+        $errors = array();
+        if (empty($name)) {
+            $errors['name'] = "Product name is required";
+        }
+        if (empty($description)) {
+            $errors['description'] = "Description is required";
+        }
+        if (empty($price) || !is_numeric($price) || $price <= 0) {
+            $errors['price'] = "Invalid price format";
+        }
+        if (empty($stock) || !is_numeric($stock) || $stock < 0) {
+            $errors['stock'] = "Invalid stock quantity format";
+        }
+        if (empty($category_id)) {
+            $errors['category_id'] = "Category is required";
+        }
+
+        if (empty($errors)) {
+            $updateQuery = "UPDATE products SET name=?, description=?, price=?, stock=?, category_id=?, image=? WHERE id=?";
+            $stmt = mysqli_prepare($conn, $updateQuery);
+
+            if ($stmt) {
+                mysqli_stmt_bind_param($stmt, "ssdissi", $name, $description, $price, $stock, $category_id, $imageReferencesString, $productId);
+
+                if (mysqli_stmt_execute($stmt)) {
+                    $_SESSION['success_message'] = 'Product updated successfully';
+                    header('Location: manageproducts.php');
+                    exit();
+                } else {
+                    $errors['database'] = "Error updating product: " . mysqli_error($conn);
+                }
+
+                mysqli_stmt_close($stmt);
+            } else {
+                $errors['database'] = "Error preparing the database statement";
+            }
+        }
+    } else {
+        echo 'Product not found.';
+        exit();
     }
 }
 
@@ -79,6 +108,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 
     if ($result && mysqli_num_rows($result) > 0) {
         $productData = mysqli_fetch_assoc($result);
+        $existingImages = explode(',', $productData['image']);
 
         $name = $productData['name'];
         $description = $productData['description'];
@@ -94,10 +124,13 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         $_SESSION['newstock'] = $stock;
         $_SESSION['newcategory_id'] = $category_id;
     } else {
+       $existingImages = [];  // Define an empty array if no product is found
         echo 'Product not found.';
         exit();
     }
 }
+
+
 ?>
 
 <div class="content-wrapper">
@@ -127,23 +160,22 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                                 </div>
                             </div>
                             <div class="row mb-3">
-                            <label class="col-sm-2 col-form-label" for="images">Product Images</label>
-                            <div class="col-sm-10">
+                                <label class="col-sm-2 col-form-label" for="images">Product Images</label>
+                                <div class="col-sm-10">
                                 <div id="image-upload-container">
-                                    <?php
-                                    $existingImages = explode(',', $productData['image']);
-                                    foreach ($existingImages as $imageReference) {
-                                        echo "<div class='image-preview'>";
-                                        echo '<img src="../uploads/' . $imageReference . '" alt="Image" height="80px" width="80px">';
-                                        echo "<button class='btn btn-danger remove-image-button'  type='button'>Remove</button>";
-                                        echo "</div>";
-                                    }
-                                    ?>
+                                        <?php
+                                            foreach ($existingImages as $imageReference) {
+                                            echo "<div class='image-preview'>";
+                                            echo '<img src="../uploads/' . $imageReference . '" alt="Image" height="80px" width="80px">';
+                                                // echo "<button class='btn btn-danger remove-image-button' type='button' data-image='$imageReference'>Remove</button>";
+                                            echo "</div>";
+                                        }
+                                        ?>
+                                    </div>
+                                    <button type="button" id="add-image-input" class="btn btn-primary">Add More Images</button>
+                                    <span style="color: red;"><?php echo isset($errors['images']) ? $errors['images'] : ''; ?></span>
                                 </div>
-                                <button type="button" id="add-image-input" class="btn btn-primary">Add More Images</button>
-                                <span style="color: red;"><?php echo isset($errors['images']) ? $errors['images'] : ''; ?></span>
                             </div>
-                        </div>
                             <div class="row mb-3">
                                 <label class="col-sm-2 col-form-label" for="price">Price</label>
                                 <div class="col-sm-10">
@@ -200,29 +232,46 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     <div class="content-backdrop fade"></div>
 </div>
 
-
-
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const container = document.getElementById("image-upload-container");
-        const addImageButton = document.getElementById("add-image-input");
+ document.addEventListener("DOMContentLoaded", function () {
+    const container = document.getElementById("image-upload-container");
+    const addImageButton = document.getElementById("add-image-input");
 
-        addImageButton.addEventListener("click", function () {
-            const input = document.createElement("input");
-            input.type = "file";
-            input.className = "form-control";
-            input.name = "images[]";
-            input.accept = "image/png, image/jpeg";
-            container.appendChild(input);
-        });
-
-        container.addEventListener('click', function (e) {
-            if (e.target.classList.contains('remove-image-button')) {
-                const imagePreview = e.target.closest('.image-preview');
-                if (imagePreview) {
-                    container.removeChild(imagePreview);
-                }
-            }
-        });
+    addImageButton.addEventListener("click", function () {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.className = "form-control";
+        input.name = "images[]";
+        input.accept = "image/png, image/jpeg";
+        container.appendChild(input);
     });
+
+    // container.addEventListener('click', function (e) {
+    //     if (e.target.classList.contains('remove-image-button')) {
+    //         const imagePreview = e.target.closest('.image-preview');
+    //         if (imagePreview) {
+    //             const imageReference = e.target.getAttribute('data-image');
+    //             removeImage(imageReference);
+    //             container.removeChild(imagePreview);
+    //         }
+    //     }
+    // });
+    
+    // function removeImage(imageReference) {
+  
+    //     fetch('remove_image.php', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({ imageFilename: imageReference })
+    //     }).then(response => response.json()).then(data => {
+    //         if (data.success) {
+    //             container.removeChild(imagePreview);
+    //         } else {
+    //             console.error('Error removing the image.');             // Handle the error
+    //         }
+    //     });
+    // }
+});   
 </script>

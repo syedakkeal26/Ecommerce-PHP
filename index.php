@@ -12,10 +12,10 @@ include('header.php');
       <!-- Mobile Metas -->
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
       <!-- Site Metas -->
-      <meta name="keywords" content="" />
-      <meta name="description" content="" />
-      <meta name="author" content="" />
-      <!-- <link rel="shortcut icon" href="famms-1.0.0/images/favicon.png" type=""> -->
+      <meta name="keywords" content="products.php" />
+      <meta name="description" content="products.php" />
+      <meta name="author" content="products.php" />
+      <!-- <link rel="shortcut icon" href="famms-1.0.0/images/favicon.png" type="products.php"> -->
       <title>E-Commerce shop</title>
       <!-- bootstrap core css -->
       <link rel="stylesheet" type="text/css" href="famms-1.0.0/css/bootstrap.css" />
@@ -34,7 +34,7 @@ include('header.php');
          <!-- slider section -->
          <section class="slider_section ">
             <div class="slider_bg_box">
-               <img src="famms-1.0.0/images/slider-bg.jpg" alt="">
+               <img src="famms-1.0.0/images/slider-bg.jpg" alt="products.php">
             </div>
             <div id="customCarousel1" class="carousel slide" data-ride="carousel">
                <div class="carousel-inner">
@@ -54,7 +54,7 @@ include('header.php');
                                     Explicabo esse amet tempora quibusdam laudantium, laborum eaque magnam fugiat hic? Esse dicta aliquid error repudiandae earum suscipit fugiat molestias, veniam, vel architecto veritatis delectus repellat modi impedit sequi.
                                  </p>
                                  <div class="btn-box">
-                                    <a href="" class="btn1">
+                                    <a href="products.php" class="btn1">
                                     Shop Now
                                     </a>
                                  </div>
@@ -79,7 +79,7 @@ include('header.php');
                                     Explicabo esse amet tempora quibusdam laudantium, laborum eaque magnam fugiat hic? Esse dicta aliquid error repudiandae earum suscipit fugiat molestias, veniam, vel architecto veritatis delectus repellat modi impedit sequi.
                                  </p>
                                  <div class="btn-box">
-                                    <a href="" class="btn1">
+                                    <a href="products.php" class="btn1">
                                     Shop Now
                                     </a>
                                  </div>
@@ -104,7 +104,7 @@ include('header.php');
                                     Explicabo esse amet tempora quibusdam laudantium, laborum eaque magnam fugiat hic? Esse dicta aliquid error repudiandae earum suscipit fugiat molestias, veniam, vel architecto veritatis delectus repellat modi impedit sequi.
                                  </p>
                                  <div class="btn-box">
-                                    <a href="" class="btn1">
+                                    <a href="products.php" class="btn1">
                                     Shop Now
                                     </a>
                                  </div>
@@ -379,7 +379,7 @@ include('header.php');
          <div class="container">
             <div class="box">
                <div class="arrival_bg_box">
-                  <img src="famms-1.0.0/images/arrival-bg.png" alt="">
+                  <img src="famms-1.0.0/images/arrival-bg.png" alt="products.php">
                </div>
                <div class="row">
                   <div class="col-md-6 ml-auto">
@@ -391,7 +391,7 @@ include('header.php');
                      <p style="margin-top: 20px;margin-bottom: 30px;">
                         Vitae fugiat laboriosam officia perferendis provident aliquid voluptatibus dolorem, fugit ullam sit earum id eaque nisi hic? Tenetur commodi, nisi rem vel, ea eaque ab ipsa, autem similique ex unde!
                      </p>
-                     <a href="">
+                     <a href="products.php">
                      Shop Now
                      </a>
                   </div>
@@ -414,16 +414,16 @@ include('header.php');
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
-                           <a href="" class="option1">
-                           Men's Shirt
+                           <a href="products.php" class="option1">
+                           Add To Cart
                            </a>
-                           <a href="" class="option2">
+                           <a href="products.php" class="option2">
                            Buy Now
                            </a>
                         </div>
                      </div>
                      <div class="img-box">
-                        <img src="famms-1.0.0/images/p1.png" alt="">
+                        <img src="famms-1.0.0/images/p1.png" alt="products.php">
                      </div>
                      <div class="detail-box">
                         <h5>
@@ -439,16 +439,16 @@ include('header.php');
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
-                           <a href="" class="option1">
+                           <a href="products.php" class="option1">
                            Add To Cart
                            </a>
-                           <a href="" class="option2">
+                           <a href="products.php" class="option2">
                            Buy Now
                            </a>
                         </div>
                      </div>
                      <div class="img-box">
-                        <img src="famms-1.0.0/images/p2.png" alt="">
+                        <img src="famms-1.0.0/images/p2.png" alt="products.php">
                      </div>
                      <div class="detail-box">
                         <h5>
@@ -464,16 +464,16 @@ include('header.php');
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
-                           <a href="" class="option1">
+                           <a href="products.php" class="option1">
                            Add To Cart
                            </a>
-                           <a href="" class="option2">
+                           <a href="products.php" class="option2">
                            Buy Now
                            </a>
                         </div>
                      </div>
                      <div class="img-box">
-                        <img src="famms-1.0.0/images/p3.png" alt="">
+                        <img src="famms-1.0.0/images/p3.png" alt="products.php">
                      </div>
                      <div class="detail-box">
                         <h5>
@@ -489,16 +489,16 @@ include('header.php');
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
-                           <a href="" class="option1">
+                           <a href="products.php" class="option1">
                            Add To Cart
                            </a>
-                           <a href="" class="option2">
+                           <a href="products.php" class="option2">
                            Buy Now
                            </a>
                         </div>
                      </div>
                      <div class="img-box">
-                        <img src="famms-1.0.0/images/p4.png" alt="">
+                        <img src="famms-1.0.0/images/p4.png" alt="products.php">
                      </div>
                      <div class="detail-box">
                         <h5>
@@ -514,16 +514,16 @@ include('header.php');
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
-                           <a href="" class="option1">
+                           <a href="products.php" class="option1">
                            Add To Cart
                            </a>
-                           <a href="" class="option2">
+                           <a href="products.php" class="option2">
                            Buy Now
                            </a>
                         </div>
                      </div>
                      <div class="img-box">
-                        <img src="famms-1.0.0/images/p5.png" alt="">
+                        <img src="famms-1.0.0/images/p5.png" alt="products.php">
                      </div>
                      <div class="detail-box">
                         <h5>
@@ -539,16 +539,16 @@ include('header.php');
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
-                           <a href="" class="option1">
+                           <a href="products.php" class="option1">
                            Add To Cart
                            </a>
-                           <a href="" class="option2">
+                           <a href="products.php" class="option2">
                            Buy Now
                            </a>
                         </div>
                      </div>
                      <div class="img-box">
-                        <img src="famms-1.0.0/images/p6.png" alt="">
+                        <img src="famms-1.0.0/images/p6.png" alt="products.php">
                      </div>
                      <div class="detail-box">
                         <h5>
@@ -564,16 +564,16 @@ include('header.php');
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
-                           <a href="" class="option1">
+                           <a href="products.php" class="option1">
                            Add To Cart
                            </a>
-                           <a href="" class="option2">
+                           <a href="products.php" class="option2">
                            Buy Now
                            </a>
                         </div>
                      </div>
                      <div class="img-box">
-                        <img src="famms-1.0.0/images/p7.png" alt="">
+                        <img src="famms-1.0.0/images/p7.png" alt="products.php">
                      </div>
                      <div class="detail-box">
                         <h5>
@@ -589,16 +589,16 @@ include('header.php');
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
-                           <a href="" class="option1">
+                           <a href="products.php" class="option1">
                            Add To Cart
                            </a>
-                           <a href="" class="option2">
+                           <a href="products.php" class="option2">
                            Buy Now
                            </a>
                         </div>
                      </div>
                      <div class="img-box">
-                        <img src="famms-1.0.0/images/p8.png" alt="">
+                        <img src="famms-1.0.0/images/p8.png" alt="products.php">
                      </div>
                      <div class="detail-box">
                         <h5>
@@ -614,16 +614,16 @@ include('header.php');
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
-                           <a href="" class="option1">
+                           <a href="products.php" class="option1">
                            Add To Cart
                            </a>
-                           <a href="" class="option2">
+                           <a href="products.php" class="option2">
                            Buy Now
                            </a>
                         </div>
                      </div>
                      <div class="img-box">
-                        <img src="famms-1.0.0/images/p9.png" alt="">
+                        <img src="famms-1.0.0/images/p9.png" alt="products.php">
                      </div>
                      <div class="detail-box">
                         <h5>
@@ -639,16 +639,16 @@ include('header.php');
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
-                           <a href="" class="option1">
+                           <a href="products.php" class="option1">
                            Add To Cart
                            </a>
-                           <a href="" class="option2">
+                           <a href="products.php" class="option2">
                            Buy Now
                            </a>
                         </div>
                      </div>
                      <div class="img-box">
-                        <img src="famms-1.0.0/images/p10.png" alt="">
+                        <img src="famms-1.0.0/images/p10.png" alt="products.php">
                      </div>
                      <div class="detail-box">
                         <h5>
@@ -664,16 +664,16 @@ include('header.php');
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
-                           <a href="" class="option1">
+                           <a href="products.php" class="option1">
                            Add To Cart
                            </a>
-                           <a href="" class="option2">
+                           <a href="products.php" class="option2">
                            Buy Now
                            </a>
                         </div>
                      </div>
                      <div class="img-box">
-                        <img src="famms-1.0.0/images/p11.png" alt="">
+                        <img src="famms-1.0.0/images/p11.png" alt="products.php">
                      </div>
                      <div class="detail-box">
                         <h5>
@@ -689,16 +689,16 @@ include('header.php');
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
-                           <a href="" class="option1">
+                           <a href="products.php" class="option1">
                            Add To Cart
                            </a>
-                           <a href="" class="option2">
+                           <a href="products.php" class="option2">
                            Buy Now
                            </a>
                         </div>
                      </div>
                      <div class="img-box">
-                        <img src="famms-1.0.0/images/p12.png" alt="">
+                        <img src="famms-1.0.0/images/p12.png" alt="products.php">
                      </div>
                      <div class="detail-box">
                         <h5>
@@ -712,7 +712,7 @@ include('header.php');
                </div>
             </div>
             <div class="btn-box">
-               <a href="">
+               <a href="products.php">
                View All products
                </a>
             </div>
@@ -731,7 +731,7 @@ include('header.php');
                            <h3>Subscribe To Get Discount Offers</h3>
                         </div>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</p>
-                        <form action="">
+                        <form action="products.php">
                            <input type="email" placeholder="Enter your email">
                            <button>
                            subscribe
@@ -759,7 +759,7 @@ include('header.php');
                         <div class="img_container">
                            <div class="img-box">
                               <div class="img_box-inner">
-                                 <img src="famms-1.0.0/images/client.jpg" alt="">
+                                 <img src="famms-1.0.0/images/client.jpg" alt="products.php">
                               </div>
                            </div>
                         </div>
@@ -781,7 +781,7 @@ include('header.php');
                         <div class="img_container">
                            <div class="img-box">
                               <div class="img_box-inner">
-                                 <img src="famms-1.0.0/images/client.jpg" alt="">
+                                 <img src="famms-1.0.0/images/client.jpg" alt="products.php">
                               </div>
                            </div>
                         </div>
@@ -803,7 +803,7 @@ include('header.php');
                         <div class="img_container">
                            <div class="img-box">
                               <div class="img_box-inner">
-                                 <img src="famms-1.0.0/images/client.jpg" alt="">
+                                 <img src="famms-1.0.0/images/client.jpg" alt="products.php">
                               </div>
                            </div>
                         </div>

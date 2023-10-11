@@ -1,9 +1,12 @@
 <?php
 include('config.php');
-session_start(); // Start the session
+session_start(); 
 
 if (isset($_SESSION['user'])) {
 $id = $_SESSION['user'];
+if (!isset($_SESSION['cart_count'])) {
+    $_SESSION['cart_count'] = 0;
+}
     $res = mysqli_query($conn, "SELECT * FROM users WHERE id = $id LIMIT 1");
 
     if ($res) {
@@ -29,11 +32,16 @@ $id = $_SESSION['user'];
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>E-commerce shop</title>
 
-    <meta name="description" content="" />
-
-    <!-- Favicon -->
+    <title>E-Commerce shop</title>
+      <!-- bootstrap core css -->
+      <link rel="stylesheet" type="text/css" href="famms-1.0.0/css/bootstrap.css" />
+      <!-- font awesome style -->
+      <link href="famms-1.0.0/css/font-awesome.min.css" rel="stylesheet" />
+      <!-- Custom styles for this template -->
+      <link href="famms-1.0.0/css/style.css" rel="stylesheet" />
+      <!-- responsive style -->
+      <link href="famms-1.0.0/css/responsive.css" rel="stylesheet" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -85,10 +93,10 @@ $id = $_SESSION['user'];
                            <a class="nav-link" href="contact.php">Contact</a>
                         </li>
                         <li class="nav-item">
-                           <a class="nav-link" href="cart.php">
-                              <i class="fa fa-shopping-cart"></i>
-                              <span class="label label-success cart_count"></span>
-                           </a>
+                            <a class="nav-link" href="viewcart.php">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span class="label label-success cart_count"><?php echo isset($_SESSION['cart_count']) ? $_SESSION['cart_count'] : 0; ?></span>
+                            </a>
                         </li>
                         <?php
                        if (isset($_SESSION['user'])) {
@@ -158,7 +166,13 @@ $id = $_SESSION['user'];
     <script src="assets/vendor/js/bootstrap.js"></script>
     <script src="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
     <script src="assets/vendor/js/menu.js"></script>
-
+    <script src="famms-1.0.0/js/jquery-3.4.1.min.js"></script>
+      <!-- popper js -->
+      <script src="famms-1.0.0/js/popper.min.js"></script>
+      <!-- bootstrap js -->
+      <script src="famms-1.0.0/js/bootstrap.js"></script>
+      <!-- custom js -->
+      <script src="famms-1.0.0/js/custom.js"></script>
     <!-- endbuild -->
 
     <!-- Vendors JS -->
