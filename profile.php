@@ -36,7 +36,7 @@ $errors = array();
       if (isset($_POST['image_submit'])) {
 
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-          $uploadDir = 'images/';
+          $uploadDir = 'uploads/';
           $uploadFile = $uploadDir . basename($_FILES['image']['name']);
 
           // Generate a unique file name to prevent overwriting

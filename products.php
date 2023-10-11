@@ -35,32 +35,42 @@ include('header.php');
                </h2>
             </div>
             <div class="row">
-                        <div class="col-sm-6 col-md-4 col-lg-4">
-                  <div class="box">
-                     <div class="option_container">
-                        <div class="options">
-                           <a href="" class="option1">
-                           Add To Cart
-                           </a>
-                           <a href="" class="option2">
-                           Buy Now
-                           </a>
-                        </div>
-                     </div>
-                     <div class="img-box">
-                        <img src="famms-1.0.0/images/p1.png" alt="">
-                     </div>
-                     <div class="detail-box">
-                        <h5>
-                           Men's Shirt
-                        </h5>
-                        <h6>
-                           $75
-                        </h6>
-                     </div>
-                  </div>
-               </div>
-               <div class="col-sm-6 col-md-4 col-lg-4">
+                <?php
+                // Assuming $conn is your database connection
+                $category_id = 1; // Replace with the correct category_id for "shirts"
+
+                $query = "SELECT * FROM products ";
+                $result = mysqli_query($conn, $query);
+
+                if ($result && mysqli_num_rows($result) > 0) {
+                    while ($product = mysqli_fetch_assoc($result)) {
+                        echo '<div class="col-sm-6 col-md-4 col-lg-4">';
+                        echo '<div class="box">';
+                        echo '<div class="option_container">';
+                        echo '<div class="options">';
+                        echo '<a href="cart.php" class="option1">Add To Cart</a>';
+                        echo '<a href="buy.php" class="option2">Buy Now</a>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '<div class="img-box">';
+                        $imageReferences = explode(',', $product['image']);
+                        if (!empty($imageReferences[0])) {
+                          echo '<img src="./uploads/' . $imageReferences[0] . '" alt="' . $product['name'] . '" >';
+                        }
+                        echo '</div>';
+                        echo '<div class="detail-box">';
+                        echo '<h5>' . $product['name'] . '</h5><br>';
+                        echo '<h6>₹' . $product['price'] . '</h6>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo 'No products found in this category.';
+                }
+                ?>
+            </div>
+               <!-- <div class="col-sm-6 col-md-4 col-lg-4">
                   <div class="box">
                      <div class="option_container">
                         <div class="options">
@@ -334,7 +344,7 @@ include('header.php');
                         </h6>
                      </div>
                   </div>
-               </div>
+               </div> -->
             </div>
             <div class="btn-box">
                <a href="">
@@ -343,7 +353,6 @@ include('header.php');
             </div>
          </div>
       </section>
-      <!-- end product section -->
 
       <!-- subscribe section -->
       <section class="subscribe_section">

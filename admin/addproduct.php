@@ -3,96 +3,90 @@ ob_start();
 include('header.php');
 $currentProfileImageUrl = '';
 
+
 if (isset($_POST['submit'])) {
-    $name = mysqli_real_escape_string($conn, $_POST['name']);
-    $description = mysqli_real_escape_string($conn, $_POST['description']);
-    $price = $_POST['price'];
-    $stock = $_POST['stock'];
-    $category_id = $_POST['category_id'];
+  $name = mysqli_real_escape_string($conn, $_POST['name']);
+  $description = mysqli_real_escape_string($conn, $_POST['description']);
+  $price = $_POST['price'];
+  $stock = $_POST['stock'];
+  $category_id = $_POST['category_id'];
 
-    $_SESSION['name'] = $name;
-    $_SESSION['description'] = $description;
-    $_SESSION['price'] = $price;
-    $_SESSION['stock'] = $stock;
-    $_SESSION['category_id'] = $category_id;
+  $_SESSION['name'] = $name;
+  $_SESSION['description'] = $description;
+  $_SESSION['price'] = $price;
+  $_SESSION['stock'] = $stock;
+  $_SESSION['category_id'] = $category_id;
 
-    $errors = array();
+  $errors = array();
 
-    // Validation checks for each field
-    if (empty($name)) {
-        $errors['name'] = "Product name is required";
-    }
+  // Validation checks for each field
+  if (empty($name)) {
+      $errors['name'] = "Product name is required";
+  }
 
-    if (empty($description)) {
-        $errors['description'] = "Description is required";
-    }
+  if (empty($description)) {
+      $errors['description'] = "Description is required";
+  }
 
-    if (empty($price)) {
-        $errors['price'] = "Price is required";
-    } elseif (!is_numeric($price) || $price <= 0) {
-        $errors['price'] = "Invalid price format";
-    }
+  if (empty($price)) {
+      $errors['price'] = "Price is required";
+  } elseif (!is_numeric($price) || $price <= 0) {
+      $errors['price'] = "Invalid price format";
+  }
 
-    if (empty($stock)) {
-        $errors['stock'] = "Stock quantity is required";
-    } elseif (!is_numeric($stock) || $stock < 0) {
-        $errors['stock'] = "Invalid stock quantity format";
-    }
+  if (empty($stock)) {
+      $errors['stock'] = "Stock quantity is required";
+  } elseif (!is_numeric($stock) || $stock < 0) {
+      $errors['stock'] = "Invalid stock quantity format";
+  }
 
-    if (empty($category_id)) {
-        $errors['category_id'] = "Category is required";
-    }
+  if (empty($category_id)) {
+      $errors['category_id'] = "Category is required";
+  }
 
-    // Check if any files were uploaded
-    if (!empty($_FILES['images']['name'][0])) {
-        $uploadDir = '../uploads/';
-        $imageReferences = array();
+  if (!empty($_FILES['images']['name'][0])) {
+      $uploadDir = '../uploads/';
+      $new_filenames = array();
 
-        // Iterate through each uploaded file
-        foreach ($_FILES['images']['name'] as $key => $fileName) {
-            $uploadFile = $uploadDir . basename($fileName);
+      foreach ($_FILES['images']['name'] as $key => $filename) {
+          $ext = pathinfo($filename, PATHINFO_EXTENSION);
+          $new_filename = uniqid() . '.' . $ext;
+          $new_filenames[] = $new_filename;
 
-            // Generate a unique file name to prevent overwriting
-            $uniqueFileName = uniqid() . '_' . $fileName;
-            $uploadPath = $uploadDir . $uniqueFileName;
+          move_uploaded_file($_FILES['images']['tmp_name'][$key], $uploadDir . $new_filename);
+      }
+  } else {
+      $new_filenames = array();
+  }
 
-            // Check if the file upload was successful
-            if (move_uploaded_file($_FILES['images']['tmp_name'][$key], $uploadPath)) {
-                $imageReferences[] = $uploadPath; // Add the reference to the array
-            } else {
-                $errors['images'][] = "Error uploading file: " . $_FILES['images']['error'][$key];
-            }
-        }
+  $imageReferencesString = implode(',', $new_filenames);
 
-        // Convert the array of references to a comma-separated string
-        $imageReferencesString = implode(',', $imageReferences);
+  // Insert the image references into the database
+  $insertQuery = "INSERT INTO products (name, description, price, stock, category_id, image)
+                   VALUES (?, ?, ?, ?, ?, ?)";
 
-        // Insert the image references into the database
-        $insertQuery = "INSERT INTO products (name, description, price, stock, category_id, image)
-                         VALUES (?, ?, ?, ?, ?, ?)";
-        
-        $stmt = mysqli_prepare($conn, $insertQuery);
-        if ($stmt) {
-            mysqli_stmt_bind_param($stmt, "ssdiss", $name, $description, $price, $stock, $category_id, $imageReferencesString);
-            if (mysqli_stmt_execute($stmt)) {
-                unset($_SESSION['name']);
-                unset($_SESSION['description']);
-                unset($_SESSION['price']);
-                unset($_SESSION['stock']);
-                unset($_SESSION['category_id']);
-    
-                $_SESSION['success_message'] = 'Product added successfully.';
-                header('Location: manageproducts.php');
-                exit();
-            } else {
-                $errors['database'] = "Error adding product to the database: " . mysqli_error($conn);
-            }
-            mysqli_stmt_close($stmt);
-        } else {
-            $errors['database'] = "Error preparing the database statement.";
-        }
-    }
+  $stmt = mysqli_prepare($conn, $insertQuery);
+  if ($stmt) {
+      mysqli_stmt_bind_param($stmt, "ssdiss", $name, $description, $price, $stock, $category_id, $imageReferencesString);
+      if (mysqli_stmt_execute($stmt)) {
+          unset($_SESSION['name']);
+          unset($_SESSION['description']);
+          unset($_SESSION['price']);
+          unset($_SESSION['stock']);
+          unset($_SESSION['category_id']);
+
+          $_SESSION['success_message'] = 'Product added successfully.';
+          header('Location: manageproducts.php');
+          exit();
+      } else {
+          $errors['database'] = "Error adding product to the database: " . mysqli_error($conn);
+      }
+      mysqli_stmt_close($stmt);
+  } else {
+      $errors['database'] = "Error preparing the database statement.";
+  }
 }
+
 ?>
 
 <!-- Add Product Form -->
@@ -166,9 +160,8 @@ if (isset($_POST['submit'])) {
                                     echo "<option value=''>Error fetching categories</option>";
                                 }
                                 ?>
-
-                            </select>
-                            <span style="color: red;"><?php echo isset($errors['category_id']) ? $errors['category_id'] : ''; ?></span>
+                                </select>
+                              <span style="color: red;"><?php echo isset($errors['category_id']) ? $errors['category_id'] : ''; ?></span>
                                 </div>
                             </div>
                             <div class="row justify-content-end">
@@ -206,4 +199,4 @@ if (isset($_POST['submit'])) {
             }
         });
     });
-</script>   
+</script>

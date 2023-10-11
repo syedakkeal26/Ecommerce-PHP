@@ -111,7 +111,7 @@ $id = $_SESSION['user'];
                                                 </div>
                                                 <div class="flex-grow-1">
                                                     <span class="fw-medium d-block">{$_SESSION['username']}</span>
-                                                    <small class="text-muted">User</small>
+                                                    <small class="text-muted">Active</small>
                                                 </div>
                                             </div>
                                         </a>
