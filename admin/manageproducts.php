@@ -8,7 +8,13 @@ $result = mysqli_query($conn, $sql);
     <div class="content-wrapper">
     <div class="container-xxl flex-grow-1 container-p-y">
         <h4 class="py-3 mb-4"><span class="text-muted fw-light">Products /</span> Manage Products</h4>
-
+            <?php
+                if (isset($_SESSION['success_message']) && !empty($_SESSION['success_message'])) {
+                    $success_message = $_SESSION['success_message'];
+                    unset($_SESSION['success_message']);
+                    echo '<div class="alert alert-success">' . $success_message . '</div>';
+                }
+                ?>
         <div class="card">
             <h5 class="card-header text-center">Manage Products
                 <a href="addproduct.php">
@@ -44,9 +50,9 @@ $result = mysqli_query($conn, $sql);
                             while ($row = mysqli_fetch_assoc($result)) {
                                 echo "<tr data-category-id='{$row['category_id']}'>";
                                 echo "<td>$sno</td>";
-                                echo "<td>" . $row['name'] . "</td>";
+                                echo "<td>" . substr($row['name'], 0, 20) . (strlen($row['name']) > 20 ? '...' : '') . "</td>";
                                 echo "<td>";
-                                
+
                                 $imageReferences = explode(',', $row['image']);
                                 if (!empty($imageReferences[0])) {
                                     echo '<img src="../uploads/' . $imageReferences[0] . '" alt="Image" height="50px" width="50px">';
@@ -104,7 +110,7 @@ $(document).ready(function() {
         rows.sort(function(a, b) {
             const aValue = $(a).find('td').eq(index).text();
             const bValue = $(b).find('td').eq(index).text();
-            
+
             if (column.attr('id') === 'price-header') {
                 return (ascending ? 1 : -1) * (parseFloat(aValue) - parseFloat(bValue));
             } else if (column.attr('id') === 'stock-header') {
@@ -113,9 +119,9 @@ $(document).ready(function() {
                 return (ascending ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue));
             }
         });
-        
+
         ascending = !ascending; // Toggle the sorting order
-        
+
         table.find('tr:gt(0)').remove();
         table.append(rows);
             column.find('i').toggleClass('fa-sort-up fa-sort-down');
@@ -127,9 +133,9 @@ $(document).ready(function() {
 
             $('#category-filter').on('change', function() {
         const selectedCategory = $(this).val();
-        
+
         $('tbody tr').each(function() {
-            const categoryCell = $(this).find('td').eq(3).text(); 
+            const categoryCell = $(this).find('td').eq(3).text();
             const categoryId = $(this).data('category-id');
 
             if (selectedCategory === '' || categoryId === selectedCategory) {

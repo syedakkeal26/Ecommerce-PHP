@@ -352,7 +352,10 @@ textarea {
   font-size: inherit;
   line-height: inherit;
 }
-
+.checkbtn {
+  width: 10%;
+  border:none;
+}
 button,
 select {
   text-transform: none;
@@ -6724,6 +6727,7 @@ a.invert-bg-dark:hover, a.invert-bg-dark:focus {
   align-items: center;
   justify-content: center;
 }
+
 .btn .bx {
   line-height: 1.15;
 }

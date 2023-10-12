@@ -1,154 +1,110 @@
 <?php
+ob_start();
 include('header.php');
 if (!isset($_SESSION['user'])) {
-    header('Location: login.php'); 
+    header('Location: login.php');
     exit;
- }
-include('config.php'); 
-
+}
+include('config.php');
 
 if (isset($_SESSION['user'])) {
     $user_id = $_SESSION['user'];
 
-    // Retrieve cart items for the authenticated user from the database
-    $query = "SELECT carts.product_id, products.name, products.price, carts.quantity 
-              FROM carts 
-              INNER JOIN products ON carts.product_id = products.id 
+    $query = "SELECT carts.product_id, products.name, products.price, carts.quantity, products.image
+              FROM carts
+              INNER JOIN products ON carts.product_id = products.id
               WHERE carts.user_id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
-} 
+}
 ?>
 
-    <section class="h-100 h-custom" style="background-color: #eee;">
+<section class="h-100 h-custom" style="background-color: #eee;">
     <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col">
-                <div class="card">
+                <div class ="card">
                     <div class="card-body p-4">
-                        <div class="row">
-                            <div class="col-lg-7">
-                                <h5 class="mb-3">
-                                    <a href="#!" class="text-body"><i class="fas fa-long-arrow-alt-left me-2"></i>Continue shopping</a>
-                                </h5>
-                                <hr>
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <div>
-                                        <p class="mb-1">Shopping cart</p>
-                                        <p class="mb-0">
-                                            You have <?php echo isset($_SESSION['cart_count']) ? $_SESSION['cart_count'] : 0; ?> items in your cart
-                                        </p>
-                                    </div>
-                                </div>
-                                <?php
-                                if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
-                                    $totalPrice = 0;
-                                    foreach ($_SESSION['cart'] as $cartItem) {
-                                        $subtotal = $cartItem['price'] * $cartItem['quantity'];
-                                        $totalPrice += $subtotal;
-                                ?>
-                                    <div class="card mb-3">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
-                                                <div class="d-flex flex-row align-items-center">
-                                                    <div>
-                                                        <img
-                                                            src=""
-                                                            class="img-fluid rounded-3"
-                                                            alt="Shopping item"
-                                                            style="width: 65px;"
-                                                        >
-                                                    </div>
-                                                    <div class="ms-3">
-                                                        <h5><?php echo $cartItem['name']; ?></h5>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex flex-row align-items-center">
-                                                    <div style="width: 50px;">
-                                                        <h5 class="fw-normal mb-0"><?php echo $cartItem['quantity']; ?></h5>
-                                                    </div>
-                                                    <div style="width: 80px;">
-                                                        <h5 class="mb-0">₹<?php echo $cartItem['price']; ?></h5>
-                                                    </div>
-                                                    <a href="#!" style="color: #cecece;"><i class="fas fa-trash-alt"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php
-                                    }
-                                }
-                                ?>
-                            </div>
-                            <div class="col-lg-5">
-                                <div class="card bg-primary text-white rounded-3">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center mb-4">
-                                            <h5 class="mb-0">Card details</h5>
-                                            <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp" class="img-fluid rounded-3" style="width: 45px;" alt="Avatar">
-                                        </div>
-                                        <p class="small mb-2">Card type</p>
-                                        <a href="#!" type="submit" class="text-white"><i class="fab fa-cc-mastercard fa-2x me-2"></i></a>
-                                        <a href="#!" type="submit" class="text-white"><i class="fab fa-cc-visa fa-2x me-2"></i></a>
-                                        <a href="#!" type="submit" class="text-white"><i class="fab fa-cc-amex fa-2x me-2"></i></a>
-                                        <a href="#!" type="submit" class="text-white"><i class="fab fa-cc-paypal fa-2x"></i></a>
-                                        <form action="checkout.php" method="POST">
-    <!-- Add fields for user information -->
-    <input type="text" name="name" placeholder="Full Name" required>
-    <input type="email" name="email" placeholder="Email" required>
-    <textarea name="address" placeholder="Shipping Address" required></textarea>
+                    <div class="col-md-12">
+                      <h5 class="mb-3">
+                          <a href="#!" class="text-body"><i class="fas fa-long-arrow-alt-left me-2"></i>Continue shopping</a>
+                      </h5>
+                      <hr>
+                      <div class="d-flex justify-content-between align-items-center mb-4">
+                          <div>
+                              <p class="mb-1">Shopping cart</p>
+                              <p class="mb-0">
+                                  You have <?php echo isset($_SESSION['cart_count']) ? $_SESSION['cart_count'] : 0; ?> items in your cart
+                              </p>
+                          </div>
+                      </div>
+                      <?php
+                      $totalPrice = 0;
+                      ?>
+                      <table class="table table-hover progress-table text-center">
+                          <thead>
+                              <tr>
+                                  <th>Item</th>
+                                  <th></th>
+                                  <th>Quantity</th>
+                                  <th>Price</th>
+                                  <th>Total per product</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <?php while ($cartItem = $result->fetch_assoc()) {
+                                  $images = explode(',', $cartItem['image']);
+                                  $firstImage = !empty($images) ? $images[0] : '';
+                                  $subtotal = $cartItem['price'] * $cartItem['quantity'];
+                                  $totalPrice += $subtotal;
+                              ?>
+                              <tr>
+                                  <td>
+                                      <img
+                                          src="uploads/<?php echo $firstImage; ?>"
+                                          class="img-fluid rounded-3"
+                                          alt="Shopping item"
+                                          style="width: 40px;">
+                                  <div class="mb-2">
+                                      <h5><?php echo strlen($cartItem['name']) > 20 ? substr($cartItem['name'], 0, 20) . '...' : $cartItem['name']; ?></h5>                </div>
+                                  </td>
+                                  <td>
+                                      <a href="remove_from_cart.php?product_id=<?php echo $cartItem['product_id']; ?>">
+                                          <i class="fa fa-trash"></i>
+                                      </a>
+                                  </td>
+                                  <td>
+                                      <div class="quantity-input">
+                                          <button class="decrement-button checkbtn" data-product="<?php echo $cartItem['product_id']; ?>">-</button>
+                                          <input type="number" name="quantity" class="checkbtn" value="<?php echo $cartItem['quantity']; ?>" min="1">
+                                          <button class="increment-button checkbtn" data-product="<?php echo $cartItem['product_id']; ?>">+</button>
+                                      </div>
+                                  </td>
+                                </td>
+                                  <td>₹<?php echo $cartItem['price']; ?></td>
+                                  <td class="product-total">₹<?php echo $cartItem['quantity'] * $cartItem['price'];?> </td>
 
-    <!-- Add fields for payment details -->
-    <input type="text" name="cardholder" placeholder="Cardholder's Name" required>
-    <input type="text" name="cardnumber" placeholder="Card Number" required>
-    <!-- Other payment fields like expiration and CVV -->
-    
-    <button type="submit">Place Order</button>
-</form>
-                                        <form class="mt-4">
-                                            <div class="form-outline form-white mb-4">
-                                                <input type="text" id="typeName" class="form-control form-control-lg" size="17" placeholder="Cardholder's Name" />
-                                                <label class="form-label" for="typeName">Cardholder's Name</label>
-                                            </div>
-                                            <div class="form-outline form-white mb-4">
-                                                <input type="text" id="typeText" class="form-control form-control-lg" size="17" placeholder="1234 5678 9012 3457" minlength="19" maxlength="19" />
-                                                <label class="form-label" for="typeText">Card Number</label>
-                                            </div>
-                                            <div class="row mb-4">
-                                                <div class="col-md-6">
-                                                    <div class="form-outline form-white">
-                                                        <input type="text" id="typeExp" class="form-control form-control-lg" placeholder="MM/YYYY" size="7" id="exp" minlength="7" maxlength="7" />
-                                                        <label class="form-label" for="typeExp">Expiration</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-outline form-white">
-                                                        <input type="password" id="typeText" class="form-control form-control-lg" placeholder="&#9679;&#9679;&#9679;" size="1" minlength="3" maxlength="3" />
-                                                        <label class="form-label" for="typeText">Cvv</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                        <hr class="my-4">
-                                        <div class="d-flex justify-content-between">
-                                            <p class="mb-2">Subtotal</p>
-                                            <p class="mb-2">₹<?php echo $totalPrice; ?></p>
-                                        </div>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <p class="mb-2">Total(Incl. taxes)</p>
-                                            <p class="mb-2">₹<?php echo $totalPrice; ?></p>
-                                        </div>
-                                        <button type="button" class="btn btn-info btn-block btn-lg">
-                                            <div class="d-flex justify-content-between">
-                                                <span>₹<?php echo $totalPrice; ?></span>
-                                                <span>Checkout <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
-                                            </div>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                              </tr>
+                              <?php } ?>
+                          </tbody>
+                      </table>
+                          <table class="table table progress-table text-center">
+                          <tr>
+                              <td>Subtotal</td>
+                              <td id="subtotal">₹<?php echo $totalPrice; ?></td>
+                          </tr>
+                          <tr>
+                              <td>Total (Incl. taxes)</td>
+                              <td id="total">₹<?php echo $totalPrice * (1 + 0.1); ?></td>
+                          </tr>
+                      </table>
+                      <a href="checkout.php">
+                        <button type="button" class="btn btn-info float-end">
+                          <span>Continue<i class="fas fa-long-arrow-alt-right ms-2"></i></span>
+                      </button>
+                      </a>
                         </div>
                     </div>
                 </div>
@@ -156,3 +112,55 @@ if (isset($_SESSION['user'])) {
         </div>
     </div>
 </section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+        $(".quantity-input").each(function() {
+            const quantityInput = $(this).find("input[name='quantity']");
+            const productId = $(this).find(".decrement-button").data("product");
+
+            $(this).find(".decrement-button").on("click", function() {
+                const currentValue = parseInt(quantityInput.val());
+                if (currentValue > 1) {
+                    quantityInput.val(currentValue - 1);
+                    updateQuantityInDatabase(productId, currentValue - 1);
+                    updateProductTotal(productId, currentValue - 1);
+                }
+            });
+
+            $(this).find(".increment-button").on("click", function() {
+                const currentValue = parseInt(quantityInput.val());
+                quantityInput.val(currentValue + 1);
+                updateQuantityInDatabase(productId, currentValue + 1);
+                updateProductTotal(productId, currentValue + 1);
+            });
+        });
+
+        function updateQuantityInDatabase(productId, newQuantity) {
+            $.post('update_cart.php', { product_id: productId, quantity: newQuantity }, function(data) {
+                // Handle the response from the server if needed
+            });
+        }
+
+        function updateProductTotal(productId, newQuantity) {
+            const productPrice = parseFloat($(`input[name='product_id'][value='${productId}']`).closest("tr").find(".price").text().replace('₹', ''));
+            const newTotal = productPrice * newQuantity;
+            $(`input[name='product_id'][value='${productId}']`).closest("tr").find(".product-total").text(`₹${newTotal.toFixed(2)}`);
+            updateSubtotalAndTotal();
+        }
+
+        function updateSubtotalAndTotal() {
+            let subtotal = 0;
+            $(".product-total").each(function() {
+                const productTotal = parseFloat($(this).text().replace('₹', ''));
+                subtotal += productTotal;
+            });
+            $("#subtotal").text(`₹${subtotal.toFixed(2)}`);
+
+            // Calculate total including taxes (change the tax rate as needed)
+            const taxRate = 0.1; // 10% tax
+            const total = subtotal * (1 + taxRate);
+            $("#total").text(`₹${total.toFixed(2)}`);
+        }
+    });
+</script>

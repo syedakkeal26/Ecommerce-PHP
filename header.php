@@ -1,21 +1,19 @@
 <?php
 include('config.php');
-session_start(); 
+session_start();
 
 if (isset($_SESSION['user'])) {
-$id = $_SESSION['user'];
-if (!isset($_SESSION['cart_count'])) {
-    $_SESSION['cart_count'] = 0;
-}
-    $res = mysqli_query($conn, "SELECT * FROM users WHERE id = $id LIMIT 1");
+  $id = $_SESSION['user'];
 
-    if ($res) {
-        $row = mysqli_fetch_array($res);
-        if ($row) {
-            $profile_image_url = $row['profile_image_url'];
-        }
+  $res = mysqli_query($conn, "SELECT * FROM users WHERE id = $id LIMIT 1");
+
+  if ($res) {
+      $row = mysqli_fetch_array($res);
+      if ($row) {
+          $profile_image_url = $row['profile_image_url'];
       }
-    }
+  }
+}
 ?>
 <!DOCTYPE html>
 
@@ -89,9 +87,9 @@ if (!isset($_SESSION['cart_count'])) {
                         <li class="nav-item">
                            <a class="nav-link" href="products.php">Products</a>
                         </li>
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                            <a class="nav-link" href="contact.php">Contact</a>
-                        </li>
+                        </li> -->
                         <li class="nav-item">
                             <a class="nav-link" href="viewcart.php">
                                 <i class="fa fa-shopping-cart"></i>
